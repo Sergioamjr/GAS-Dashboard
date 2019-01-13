@@ -1,0 +1,42 @@
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px;
+  & > div {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 15px;
+    }
+}
+
+/* Função que gera as classes, recebe dois parâmetros;
+o prefixo da classe e a quantidade de colunas. */
+@mixin generateColumn($breakpoint, $until) {
+  @for $value from 1 through $until {
+    .#{$breakpoint}-#{$value}-#{$until} {
+      width: ((0% + $value / $until * 100));
+    }
+  }
+}
+
+@include generateColumn("xs", 12);
+
+@media screen and (min-width: 768px) {
+  .grid {
+    @include generateColumn("sm", 12);
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .grid {
+    @include generateColumn("md", 12);
+  }
+}
+
+
+@media screen and (min-width: 1200px) {
+  .grid {
+    @include generateColumn("lg", 12);
+  }
+}

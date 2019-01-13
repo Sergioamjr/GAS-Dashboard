@@ -1,0 +1,27 @@
+.header {
+  background: $themeDark;
+  padding: 0 15px;
+  height: 64px;
+}
+
+.user-info {
+  position: absolute;
+  top: 11px;
+  right: 15px;
+  min-width: 230px;
+  border-radius: 4px;
+}
+
+.sub-nivel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  &-actived {
+    max-height: 500px;
+  }
+}
+
+.fix-icon-position {
+  position: relative;
+  top: -1px;
+}

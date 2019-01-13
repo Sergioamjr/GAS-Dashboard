@@ -1,0 +1,200 @@
+@import "./variables.scss";
+
+.d {
+  &-block {
+    display: block;
+  }
+  &-inline {
+    display: inline;
+  }
+
+  &-inline-block {
+    display: inline-block;
+  }
+  &-none {
+    display: none;
+  }
+}
+
+.overflow {
+  &-hidden {
+    overflow: hidden;
+    &-x {
+      overflow-x: hidden;
+    }
+  }
+  &-scroll {
+    overflow: scroll;
+    &-y {
+      overflow-x: hidden;
+    }
+  }
+  &-auto {
+    overflow: auto;
+  }
+}
+
+.vh-100 {
+  height: 100vh;
+}
+
+.lh-8 {
+  line-height: 0.8;
+}
+
+.bb-white {
+  border-bottom: 1px solid $white;
+}
+
+.fs {
+  &-0 {
+    font-size: 4rem;
+  }
+  &-1 {
+    font-size: 3rem;
+  }
+  &-2 {
+    font-size: 2.5rem;
+  }
+  &-3 {
+    font-size: 2rem;
+  }
+  &-4 {
+    font-size: 1.6rem;
+  }
+  &-5 {
+    font-size: 1.3rem;
+  }
+  &-6 {
+    font-size: 1rem;
+  }
+  &-7 {
+    font-size: 0.9rem;
+  }
+  &-8 {
+    font-size: 0.8rem;
+  }
+}
+
+.color {
+  &-dark {
+    color: $dark;
+  }
+
+  &-theme {
+    color: $theme;
+  }
+
+  &-white {
+    color: $white;
+  }
+
+  &-primary {
+    color: $primary;
+  }
+
+  &-danger {
+    color: $danger;
+  }
+  &-success {
+    color: $success;
+  }
+  &-lighter {
+    color: $light;
+  }
+  &-lighterDarken {
+    color: $lightDarken;
+  }
+}
+
+.background {
+  &-dark {
+    background: $dark;
+  }
+
+  &-theme {
+    background: $theme;
+  }
+  &-white {
+    background: $white;
+  }
+  &-lighter {
+    background: $light;
+  }
+  &-danger {
+    background: $danger;
+  }
+  &-success {
+    background: $success;
+  }
+}
+
+.fw {
+  &-lighter {
+    font-weight: lighter;
+  }
+  &-bold {
+    font-weight: bold;
+  }
+  &-300 {
+    font-weight: 300;
+  }
+}
+
+.p {
+  &-center {
+    text-align: center;
+  }
+
+  &-left {
+    text-align: left;
+  }
+
+  &-right {
+    text-align: right;
+  }
+}
+
+.no-border {
+  border: 0;
+}
+
+.br-5 {
+  border-radius: 5px;
+}
+
+.n-br {
+  border-radius: 0px;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.tooltip {
+  position: relative;
+  overflow: hidden;
+  &:after {
+    transition: all 0.4s ease;
+    opacity: 0;
+    content: attr(data-tooltip);
+    background: #333;
+    position: absolute;
+    color: #fff;
+    padding: 5px 10px;
+    display: block;
+    border-radius: 3px;
+    bottom: 0;
+    top: 0;
+    z-index: 1;
+    height: 20px;
+    margin: auto;
+    left: 120%;
+  }
+  &:hover {
+    overflow: initial;
+    &:after {
+      opacity: 1;
+    }
+  }
+}

@@ -1,0 +1,61 @@
+@import "./style/variables.scss";
+@import "./style/grid.scss";
+@import "./style/default.scss";
+@import "./style/form.scss";
+@import "./style/themes.scss";
+@import "./style/helpers.scss";
+@import "./style/table.scss";
+@import "./components/Header/Header.scss";
+@import "./components/Button/Button.scss";
+@import "./components/Sidebar/Sidebar.scss";
+@import "./components/Modal/Modal.scss";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
+
+.raleway {
+  font-family: "Raleway", sans-serif;
+}
+
+li {
+  list-style-type: none;
+}
+
+.full-screen {
+  height: 100vh;
+  width: 100vw;
+  &-with-header {
+    height: calc(100vh - 64px);
+  }
+}
+
+.box-content {
+  background: #fff;
+}
+
+.page-title {
+  font-weight: 300;
+  margin-bottom: 30px;
+  color: $dark;
+}
+
+.rotate {
+  animation: rotate infinite linear 2s;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

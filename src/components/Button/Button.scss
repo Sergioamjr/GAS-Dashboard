@@ -1,0 +1,50 @@
+.btn {
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  color: $dark;
+  border: 1px solid $lightDarken;
+  &:hover {
+    background: $lightDarken;
+  }
+  &-primary {
+    background: $primary;
+    color: $white;
+    &:hover {
+      background: darken($primary, 10%);
+    }
+  }
+  &-danger {
+    background: $danger;
+    color: $white;
+    &:hover {
+      background: darken($danger, 10%);
+    }
+  }
+
+  &-success {
+    background: $success;
+    color: $white;
+    &:hover {
+      background: darken($success, 10%);
+    }
+  }
+  &-small {
+    padding: 5px 10px;
+  }
+  &-icon {
+    padding: 10px;
+  }
+
+  &-circle {
+    border-radius: 50%;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+  }
+  &-noborder {
+    border-radius: 0;
+  }
+}

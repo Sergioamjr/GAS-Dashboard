@@ -1,0 +1,59 @@
+.sidebar {
+  background: $themeBlue;
+  &-purple {
+    background: $themePurple;
+  }
+
+  &-theme {
+    background: $theme;
+  }
+
+  &-salmon {
+    background: $themeSalmon;
+  }
+
+  &-blue {
+    background: $themeBlue;
+  }
+
+  &-dark {
+    background: $themeDark;
+  }
+}
+
+.custom-button {
+  &-purple {
+    background: $themePurple;
+    &:hover {
+      background: $themePurpleDark;
+    }
+  }
+
+  &-salmon {
+    background: $themeSalmon;
+    &:hover {
+      background: $themeSalmonDark;
+    }
+  }
+
+  &-theme {
+    background: $theme;
+    &:hover {
+      background: $themeDarken;
+    }
+  }
+
+  &-blue {
+    background: $themeBlue;
+    &:hover {
+      background: $themeBlueDark;
+    }
+  }
+
+  &-dark {
+    background: $themeDark;
+    &:hover {
+      background: $themeDarkDark;
+    }
+  }
+}

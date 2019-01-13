@@ -1,0 +1,13 @@
+[ignore]
+.*/build/.*
+.*/public/.*
+
+[include]
+
+[libs]
+
+[lints]
+
+[options]
+
+[strict]

@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Button /> should create a snapshot file 1`] = `
+<button
+  className="btn "
+>
+  Botão Padrão
+</button>
+`;
+
+exports[`<Button /> should create a snapshot file 2`] = `
+<button
+  className="btn-small btn "
+>
+  Botão pequeno
+</button>
+`;
+
+exports[`<Button /> should create a snapshot file 3`] = `
+<button
+  className="btn-primary btn "
+>
+  Botão primário
+</button>
+`;

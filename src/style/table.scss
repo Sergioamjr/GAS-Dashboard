@@ -1,0 +1,40 @@
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  // table-layout: fixed;
+  text-align: left;
+  border-collapse: collapse;
+  thead {
+    background: $light;
+    th {
+      font-weight: bold;
+      // width: 160px;
+      white-space: nowrap;
+    }
+  }
+  th,
+  td {
+    padding: 0 20px;
+    height: 54px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+  tr {
+    border-radius: 10px;
+    border: 1px solid $lightDarken;
+  }
+  &-stripped {
+    tbody {
+      tr:nth-child(odd) {
+        background: #f9f9f9;
+      }
+      td {
+        padding: 20px 10px;
+        color: #424242;
+      }
+    }
+  }
+}
