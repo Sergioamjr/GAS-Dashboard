@@ -4,6 +4,8 @@ import Login from "../pages/Login";
 import RestrictPage from "../components/RestrictPage";
 import Home from "../pages/Home";
 import Profile from "../pages/Profile/Profile";
+import ListUses from "../pages/ListUsers/ListUsers";
+import ListActions from "../pages/ListActions/ListActions";
 
 class AppRouter extends React.Component {
   render() {
@@ -23,7 +25,23 @@ class AppRouter extends React.Component {
             component={props => <RestrictPage component={Profile} {...props} />}
           />
 
-          <Redirect to="/" />
+          <Route
+            exact
+            path="/usuarios"
+            component={props => (
+              <RestrictPage component={ListUses} {...props} />
+            )}
+          />
+
+          <Route
+            exact
+            path="/lista-de-entregas"
+            component={props => (
+              <RestrictPage component={ListActions} {...props} />
+            )}
+          />
+
+          <Redirect to="/inicio" />
         </Switch>
       </HashRouter>
     );

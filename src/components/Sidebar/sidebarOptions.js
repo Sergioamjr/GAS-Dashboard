@@ -13,12 +13,12 @@ const SidebarOptions = [
   },
   {
     name: "Cadastrar Entrega",
-    to: "/criar-requisicao",
+    to: "/lista-de-entregas",
     icon: "fas fa-file-alt"
   },
   {
     name: "Consultar Usuários",
-    to: "/criar-requisicao",
+    to: "/usuarios",
     icon: "fas fa-file-alt"
   }
 ];

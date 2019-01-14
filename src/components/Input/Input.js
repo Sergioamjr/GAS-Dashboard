@@ -33,7 +33,7 @@ const Input = (props: Props) => {
         <input {...otherProps} name={name} id={name} />
       )}
       {hasError && (
-        <p className="color-danger fs-8 input-wrapper-error">{errorMessage}</p>
+        <p className="color-danger fs-7 m-top-5 input-wrapper-error">{errorMessage}</p>
       )}
       {prefix && <span className="float-prefix">{prefix}</span>}
     </div>
