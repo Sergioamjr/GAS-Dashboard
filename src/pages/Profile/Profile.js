@@ -5,6 +5,22 @@ import PageWrapper from "../../components/PageWrapper/PageWrapper";
 import Button from "../../components/Button/Button";
 import ProfileForm from "../../components/ProfileForm";
 import PartnesForm from "../../components/PartnesForm";
+import { searchUser, addUserAsPartner } from "../../services/user";
+import _get from "lodash/get";
+import { getAuth } from "../../services/localStorage";
+import {
+  updateMessage,
+  updateErrorMessage
+} from "../../redux/store/Feedback/feedback";
+
+const partnersDefault = {
+  isQuerying: false,
+  isAdding: false,
+  isRemoving: false,
+  value: "",
+  results: [],
+  adds: []
+};
 
 const stateDefault = {
   data: {
@@ -15,12 +31,7 @@ const stateDefault = {
     telefone_de_emergencia: "",
     nome_de_emergencia: ""
   },
-  partners: {
-    isQuerying: false,
-    value: "",
-    results: [],
-    adds: []
-  }
+  partners: partnersDefault
 };
 
 class Profile extends React.Component {
@@ -28,17 +39,77 @@ class Profile extends React.Component {
     ...stateDefault
   };
 
-  onChangeHandler = ({ target: { name, value } }) =>
+  componentDidMount = () => {
+    this.props.dispatch(updateMessage("Adicionado com sucesso."));
+  };
+
+  onChangeHandler = ({ target: { name, value } }) => {
     this.setState({
       data: {
         ...this.state.data,
         [name]: value
       }
     });
+  };
+
+  fetchSearchUser = () => {
+    this.setState(
+      { partners: { ...this.state.partners, isQuerying: true } },
+      async () => {
+        try {
+          const search = _get(this.state, "partners.value");
+          const { user } = await searchUser(search);
+          this.setState({
+            partners: {
+              ...this.state.partners,
+              results: user,
+              isQuerying: false
+            }
+          });
+        } catch (error) {}
+      }
+    );
+  };
 
   onQueryPartners = ({ target: { value } }) => {
-    this.setState({ partners: { ...this.state.partners, value } });
+    this.setState(
+      { partners: { ...this.state.partners, results: [], value } },
+      () => {
+        if (value.length > 4) {
+          this.fetchSearchUser();
+        }
+      }
+    );
   };
+
+  addPartnerHandler = (partner_id, event) => {
+    event.preventDefault();
+    this.setState(
+      {
+        partners: { ...this.state.partners, isAdding: true }
+      },
+      async () => {
+        try {
+          // const { _id } = await getAuth();
+          const _id = "5c3e63cb7b4d6207601b3ab9";
+          const promises = [
+            addUserAsPartner({
+              _id,
+              partner_id
+            }),
+            addUserAsPartner({
+              _id: partner_id,
+              partner_id: _id
+            })
+          ];
+          await Promise.all(promises);
+          this.setState({ partners: partnersDefault });
+          this.props.dispatch(updateMessage("Adicionado com sucesso."));
+        } catch (error) {}
+      }
+    );
+  };
+
   render() {
     return (
       <PageWrapper title="Dados Pessoais">
@@ -52,6 +123,7 @@ class Profile extends React.Component {
           <FromGroup title="Conjugue e familiares no GAS">
             <PartnesForm
               {...this.state.partners}
+              addPartner={this.addPartnerHandler}
               onChange={this.onQueryPartners}
             />
           </FromGroup>
