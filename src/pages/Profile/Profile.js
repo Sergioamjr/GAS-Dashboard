@@ -5,7 +5,12 @@ import PageWrapper from "../../components/PageWrapper/PageWrapper";
 import Button from "../../components/Button/Button";
 import ProfileForm from "../../components/ProfileForm";
 import PartnesForm from "../../components/PartnesForm";
-import { searchUser, addUserAsPartner } from "../../services/user";
+import {
+  searchUser,
+  addUserAsPartner,
+  getPartners,
+  removeUserAsPartner
+} from "../../services/user";
 import _get from "lodash/get";
 import { getAuth } from "../../services/localStorage";
 import {
@@ -40,7 +45,27 @@ class Profile extends React.Component {
   };
 
   componentDidMount = () => {
-    this.props.dispatch(updateMessage("Adicionado com sucesso."));
+    this.fetchPartners();
+  };
+
+  fetchPartners = () => {
+    this.setState(
+      { partners: { ...this.state.partners, isQuerying: true } },
+      async () => {
+        try {
+          const _id = "5c3e63cb7b4d6207601b3ab9";
+          const { partners } = await getPartners(_id);
+          console.log(partners);
+          this.setState({
+            partners: {
+              ...this.state.partners,
+              adds: partners,
+              isQuerying: false
+            }
+          });
+        } catch (error) {}
+      }
+    );
   };
 
   onChangeHandler = ({ target: { name, value } }) => {
@@ -103,14 +128,57 @@ class Profile extends React.Component {
             })
           ];
           await Promise.all(promises);
-          this.setState({ partners: partnersDefault });
+          this.setState({ partners: partnersDefault }, this.fetchPartners);
           this.props.dispatch(updateMessage("Adicionado com sucesso."));
         } catch (error) {}
       }
     );
   };
 
+  removePartnerHandler = (idToRemove, event) => {
+    event.preventDefault();
+    this.setState(
+      {
+        partners: { ...this.state.partners, isRemoving: true }
+      },
+      async () => {
+        try {
+          // const { _id } = await getAuth();
+          const _id = "5c3e63cb7b4d6207601b3ab9";
+          console.log(_id);
+          console.log(idToRemove);
+
+          const promises = [
+            removeUserAsPartner({
+              _id,
+              idToRemove
+            }),
+            removeUserAsPartner({
+              _id: idToRemove,
+              idToRemove: _id
+            })
+          ];
+          await Promise.all(promises);
+          this.setState({ partners: partnersDefault }, this.fetchPartners);
+          this.props.dispatch(updateMessage("Removido com sucesso."));
+        } catch (error) {}
+      }
+    );
+  };
+
   render() {
+    const {
+      partners: { results, adds }
+    } = this.state;
+    const partnersToShow = results.filter(({ _id }) => {
+      let returned = true;
+      adds.forEach(({ _id: add_id }) => {
+        if (_id === add_id) {
+          returned = false;
+        }
+      });
+      return returned;
+    });
     return (
       <PageWrapper title="Dados Pessoais">
         <div className="m-bottom-40">
@@ -123,6 +191,8 @@ class Profile extends React.Component {
           <FromGroup title="Conjugue e familiares no GAS">
             <PartnesForm
               {...this.state.partners}
+              results={partnersToShow}
+              removePartner={this.removePartnerHandler}
               addPartner={this.addPartnerHandler}
               onChange={this.onQueryPartners}
             />

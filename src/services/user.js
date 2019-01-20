@@ -85,8 +85,16 @@ export const searchUser = async search => {
   return await promiseFactory("search-user", { search });
 };
 
+export const getPartners = async _id => {
+  return await promiseFactory("get-user-partners", { _id });
+};
+
 export const addUserAsPartner = async params => {
   return await promiseFactoryPost("add-partner", params);
+};
+
+export const removeUserAsPartner = async params => {
+  return await promiseFactoryPost("remove-partner", params);
 };
 
 export const CreateUser = ({
