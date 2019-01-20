@@ -64,8 +64,7 @@ const mountHeader = (token, params, method = "GET") => {
 };
 
 const promiseFactory = async (endpoint, args = {}, method = "get") => {
-  // const { token } = await getAuth();
-  const token = "das";
+  const { token } = await getAuth();
   const params = mountHeader(token, args, method.toUpperCase());
   return axios[method](`${BACKEND}/${endpoint}`, { ...params })
     .then(response => formatResponse(response))
@@ -73,8 +72,7 @@ const promiseFactory = async (endpoint, args = {}, method = "get") => {
 };
 
 const promiseFactoryPost = async (endpoint, args = {}, method = "post") => {
-  // const { token } = await Storage.getKey();
-  const token = "das";
+  const { token } = await getAuth();
   const params = mountHeader(token, args, method.toUpperCase());
   return axios[method](`${BACKEND}/${endpoint}`, args, { ...params })
     .then(response => formatResponse(response))
@@ -89,12 +87,24 @@ export const getPartners = async _id => {
   return await promiseFactory("get-user-partners", { _id });
 };
 
+export const getUserInfo = async _id => {
+  return await promiseFactory("get-by-id", { _id });
+};
+
 export const addUserAsPartner = async params => {
   return await promiseFactoryPost("add-partner", params);
 };
 
 export const removeUserAsPartner = async params => {
   return await promiseFactoryPost("remove-partner", params);
+};
+
+export const hasValidToken = async params => {
+  return await promiseFactoryPost("token", params);
+};
+
+export const updateUser = async params => {
+  return await promiseFactoryPost("atualizar-usuario", params, "put");
 };
 
 export const CreateUser = ({

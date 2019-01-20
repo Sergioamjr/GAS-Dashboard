@@ -17,13 +17,14 @@ class ProfileForm extends React.Component {
           </div>
           <div className="sm-6-12">
             <Input
-              label="Telefone:"
-              name="telefone"
+              label="Sobrenome:"
+              name="sobrenome"
               onChange={this.props.onChangeHandler}
-              value={this.props.telefone}
-              placeholder="Digite seu telefone"
+              value={this.props.sobrenome}
+              placeholder="Digite seu sobrenome"
             />
           </div>
+
           <div className="sm-6-12">
             <Input
               label="Cidade:"
@@ -33,7 +34,16 @@ class ProfileForm extends React.Component {
               placeholder="Digite sua cidade"
             />
           </div>
-          <div className="sm-6-12">
+          <div className="sm-3-12">
+            <Input
+              label="Telefone:"
+              name="telefone"
+              onChange={this.props.onChangeHandler}
+              value={this.props.telefone}
+              placeholder="Digite seu telefone"
+            />
+          </div>
+          <div className="sm-3-12">
             <Input
               label="Nascimento:"
               name="nascimento"
@@ -45,18 +55,18 @@ class ProfileForm extends React.Component {
           <div className="sm-6-12">
             <Input
               label="Telefone de Emergência:"
-              name="telefone_de_emergencia"
+              name="numeroDeEmergencia"
               onChange={this.props.onChangeHandler}
-              value={this.props.telefone_de_emergencia}
+              value={this.props.numeroDeEmergencia}
               placeholder="Digite um telefone de emergência"
             />
           </div>
           <div className="sm-6-12">
             <Input
               label="Nome do contato de emergência:"
-              name="nome_de_emergencia"
+              name="nomeDeEmergencia"
               onChange={this.props.onChangeHandler}
-              value={this.props.nome_de_emergencia}
+              value={this.props.nomeDeEmergencia}
               placeholder="Digite o nome do contato de emergência"
             />
           </div>

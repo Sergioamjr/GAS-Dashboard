@@ -12,7 +12,7 @@ import { UpdateUser } from "../../redux/store/User/User";
 
 type State = {
   data: {
-    username: string,
+    email: string,
     password: string
   },
   hasError: boolean,
@@ -26,7 +26,7 @@ type Props = {
 
 const stateDefault = {
   data: {
-    username: "",
+    email: "",
     password: ""
   },
   hasError: false,
@@ -40,8 +40,8 @@ class Login extends React.Component<Props, State> {
 
   // componentDidMount = async () => {
   //   try {
-  //     const { username } = await getAuth();
-  //     if (username) {
+  //     const { email } = await getAuth();
+  //     if (email) {
   //       this.redirectToHome();
   //     }
   //   } catch (error) {}
@@ -78,7 +78,7 @@ class Login extends React.Component<Props, State> {
           }
           this.props.dispatch(UpdateUser(user));
           await setAuth(user);
-          this.setState({ isSubmiting: false }, this.redirectToHome);
+          this.redirectToHome();
         } catch (error) {
           this.setState({
             isSubmiting: false,
@@ -91,9 +91,9 @@ class Login extends React.Component<Props, State> {
 
   validateLoginForm = () => {
     const {
-      data: { username, password }
+      data: { email, password }
     } = this.state;
-    return !username || !password;
+    return !email || !password;
   };
 
   render() {
@@ -106,9 +106,9 @@ class Login extends React.Component<Props, State> {
             <FromGroup title="Faça login" hideIcon>
               <div className="p-15 background-white">
                 <Input
-                  value={this.state.data.username}
+                  value={this.state.data.email}
                   label="Usuário"
-                  name="username"
+                  name="email"
                   onChange={this.onChangeHandler}
                   placeholder="Digite seu usuário"
                 />

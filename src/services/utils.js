@@ -5,12 +5,12 @@ import * as axios from "axios";
 const RequestWithParams = (
   baseURL: string,
   method: string = "post",
-  params: any
+  data: any
 ) => {
   return axios.create({
     baseURL,
     method,
-    params,
+    data,
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json"

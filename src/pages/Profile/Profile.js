@@ -9,7 +9,9 @@ import {
   searchUser,
   addUserAsPartner,
   getPartners,
-  removeUserAsPartner
+  removeUserAsPartner,
+  getUserInfo,
+  updateUser
 } from "../../services/user";
 import _get from "lodash/get";
 import { getAuth } from "../../services/localStorage";
@@ -29,13 +31,17 @@ const partnersDefault = {
 
 const stateDefault = {
   data: {
+    queryUser: false,
+    _id: "",
     nome: "",
+    sobrenome: "",
     telefone: "",
     cidade: "",
     nascimento: "",
-    telefone_de_emergencia: "",
-    nome_de_emergencia: ""
+    numeroDeEmergencia: "",
+    nomeDeEmergencia: ""
   },
+  isLoading: false,
   partners: partnersDefault
 };
 
@@ -45,7 +51,27 @@ class Profile extends React.Component {
   };
 
   componentDidMount = () => {
+    this.fetchUserInfo();
     this.fetchPartners();
+  };
+
+  fetchUserInfo = () => {
+    this.setState(
+      { data: { ...this.state.data, queryUser: true } },
+      async () => {
+        try {
+          const { _id } = await getAuth();
+          const { user } = await getUserInfo(_id);
+          this.setState({
+            data: {
+              ...this.state.data,
+              ...user,
+              queryUser: false
+            }
+          });
+        } catch (error) {}
+      }
+    );
   };
 
   fetchPartners = () => {
@@ -53,9 +79,8 @@ class Profile extends React.Component {
       { partners: { ...this.state.partners, isQuerying: true } },
       async () => {
         try {
-          const _id = "5c3e63cb7b4d6207601b3ab9";
+          const { _id, token } = await getAuth();
           const { partners } = await getPartners(_id);
-          console.log(partners);
           this.setState({
             partners: {
               ...this.state.partners,
@@ -115,8 +140,7 @@ class Profile extends React.Component {
       },
       async () => {
         try {
-          // const { _id } = await getAuth();
-          const _id = "5c3e63cb7b4d6207601b3ab9";
+          const { _id } = await getAuth();
           const promises = [
             addUserAsPartner({
               _id,
@@ -143,11 +167,7 @@ class Profile extends React.Component {
       },
       async () => {
         try {
-          // const { _id } = await getAuth();
-          const _id = "5c3e63cb7b4d6207601b3ab9";
-          console.log(_id);
-          console.log(idToRemove);
-
+          const { _id } = await getAuth();
           const promises = [
             removeUserAsPartner({
               _id,
@@ -166,19 +186,43 @@ class Profile extends React.Component {
     );
   };
 
-  render() {
+  filterResultsToAdd = () => {
     const {
       partners: { results, adds }
     } = this.state;
-    const partnersToShow = results.filter(({ _id }) => {
+    const userID = _get(this.state, "data._id");
+    return results.filter(({ _id }) => {
       let returned = true;
       adds.forEach(({ _id: add_id }) => {
         if (_id === add_id) {
           returned = false;
         }
       });
+      if (_id === userID) {
+        returned = false;
+      }
+
       return returned;
     });
+  };
+
+  onUpdateUser = () => {
+    this.setState(
+      {
+        isLoading: true
+      },
+      async () => {
+        try {
+          console.log(this.state.data);
+          await updateUser({ ...this.state.data });
+          this.setState({ isLoading: false });
+        } catch (error) {}
+      }
+    );
+  };
+
+  render() {
+    const partnersToShow = this.filterResultsToAdd();
     return (
       <PageWrapper title="Dados Pessoais">
         <div className="m-bottom-40">
@@ -199,7 +243,9 @@ class Profile extends React.Component {
           </FromGroup>
           <div className="d-flex d-flex-space-between">
             <div>
-              <Button type="primary">Salvar</Button>
+              <Button onClick={this.onUpdateUser} type="primary">
+                Salvar
+              </Button>
               <Button className="m-left-10">Editar</Button>
             </div>
             <Button type="danger">Alterar minha senha</Button>
