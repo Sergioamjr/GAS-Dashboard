@@ -1,10 +1,10 @@
-import React from "react";
-import FromGroup from "../../components/FormGroup/FormGroup";
-import Input from "../../components/Input/Input";
-import PageWrapper from "../../components/PageWrapper/PageWrapper";
-import Button from "../../components/Button/Button";
-import ProfileForm from "../../components/ProfileForm";
-import PartnesForm from "../../components/PartnesForm";
+import React from 'react';
+import FromGroup from '../../components/FormGroup/FormGroup';
+import Input from '../../components/Input/Input';
+import PageWrapper from '../../components/PageWrapper/PageWrapper';
+import Button from '../../components/Button/Button';
+import ProfileForm from '../../components/ProfileForm';
+import PartnesForm from '../../components/PartnesForm';
 import {
   searchUser,
   addUserAsPartner,
@@ -12,19 +12,19 @@ import {
   removeUserAsPartner,
   getUserInfo,
   updateUser
-} from "../../services/user";
-import _get from "lodash/get";
-import { getAuth } from "../../services/localStorage";
+} from '../../services/user';
+import _get from 'lodash/get';
+import { getAuth } from '../../services/localStorage';
 import {
   updateMessage,
   updateErrorMessage
-} from "../../redux/store/Feedback/feedback";
+} from '../../redux/store/Feedback/feedback';
 
 const partnersDefault = {
   isQuerying: false,
   isAdding: false,
   isRemoving: false,
-  value: "",
+  value: '',
   results: [],
   adds: []
 };
@@ -32,16 +32,17 @@ const partnersDefault = {
 const stateDefault = {
   data: {
     queryUser: false,
-    _id: "",
-    nome: "",
-    sobrenome: "",
-    telefone: "",
-    cidade: "",
-    nascimento: "",
-    numeroDeEmergencia: "",
-    nomeDeEmergencia: ""
+    _id: '',
+    nome: '',
+    sobrenome: '',
+    telefone: '',
+    cidade: '',
+    nascimento: '',
+    numeroDeEmergencia: '',
+    nomeDeEmergencia: ''
   },
   isLoading: false,
+  isEditing: false,
   partners: partnersDefault
 };
 
@@ -107,7 +108,7 @@ class Profile extends React.Component {
       { partners: { ...this.state.partners, isQuerying: true } },
       async () => {
         try {
-          const search = _get(this.state, "partners.value");
+          const search = _get(this.state, 'partners.value');
           const { user } = await searchUser(search);
           this.setState({
             partners: {
@@ -152,8 +153,11 @@ class Profile extends React.Component {
             })
           ];
           await Promise.all(promises);
-          this.setState({ partners: partnersDefault }, this.fetchPartners);
-          this.props.dispatch(updateMessage("Adicionado com sucesso."));
+          this.setState(
+            { partners: partnersDefault, isEditing: false },
+            this.fetchPartners
+          );
+          this.props.dispatch(updateMessage('Adicionado com sucesso.'));
         } catch (error) {}
       }
     );
@@ -180,7 +184,7 @@ class Profile extends React.Component {
           ];
           await Promise.all(promises);
           this.setState({ partners: partnersDefault }, this.fetchPartners);
-          this.props.dispatch(updateMessage("Removido com sucesso."));
+          this.props.dispatch(updateMessage('Removido com sucesso.'));
         } catch (error) {}
       }
     );
@@ -190,7 +194,7 @@ class Profile extends React.Component {
     const {
       partners: { results, adds }
     } = this.state;
-    const userID = _get(this.state, "data._id");
+    const userID = _get(this.state, 'data._id');
     return results.filter(({ _id }) => {
       let returned = true;
       adds.forEach(({ _id: add_id }) => {
@@ -213,42 +217,60 @@ class Profile extends React.Component {
       },
       async () => {
         try {
-          console.log(this.state.data);
           await updateUser({ ...this.state.data });
-          this.setState({ isLoading: false });
+          this.setState({ isLoading: false, isEditing: false });
+          this.props.dispatch(updateMessage('Perfil alterado com sucesso.'));
         } catch (error) {}
       }
     );
   };
 
+  onEditHandler = () => {
+    this.setState({
+      isEditing: !this.state.isEditing
+    });
+  };
+
   render() {
     const partnersToShow = this.filterResultsToAdd();
     return (
-      <PageWrapper title="Dados Pessoais">
-        <div className="m-bottom-40">
-          <FromGroup title="Dados pessoais" formName="Dados do voluntário">
+      <PageWrapper title='Dados Pessoais'>
+        <div className='m-bottom-40'>
+          <FromGroup title='Dados pessoais' formName='Dados do voluntário'>
             <ProfileForm
               {...this.state.data}
+              isDisabled={this.state.isEditing}
               onChangeHandler={this.onChangeHandler}
             />
           </FromGroup>
-          <FromGroup title="Conjugue e familiares no GAS">
+          <FromGroup title='Conjugue e familiares no GAS'>
             <PartnesForm
               {...this.state.partners}
               results={partnersToShow}
+              isDisabled={this.state.isEditing}
               removePartner={this.removePartnerHandler}
               addPartner={this.addPartnerHandler}
               onChange={this.onQueryPartners}
             />
           </FromGroup>
-          <div className="d-flex d-flex-space-between">
+          <div className='d-flex d-flex-space-between'>
             <div>
-              <Button onClick={this.onUpdateUser} type="primary">
-                Salvar
-              </Button>
-              <Button className="m-left-10">Editar</Button>
+              {!this.state.isEditing ? (
+                <Button onClick={this.onEditHandler} className='m-left-10'>
+                  Editar
+                </Button>
+              ) : (
+                <div>
+                  <Button onClick={this.onUpdateUser} type='primary'>
+                    Salvar
+                  </Button>
+                  <Button onClick={this.onEditHandler} className='m-left-10'>
+                    Cancelar
+                  </Button>
+                </div>
+              )}
             </div>
-            <Button type="danger">Alterar minha senha</Button>
+            <Button type='danger'>Alterar minha senha</Button>
           </div>
         </div>
       </PageWrapper>

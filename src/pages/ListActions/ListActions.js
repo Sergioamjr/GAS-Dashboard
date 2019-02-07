@@ -1,39 +1,53 @@
-import React from "react";
-import FromGroup from "../../components/FormGroup/FormGroup";
-import Input from "../../components/Input/Input";
-import PageWrapper from "../../components/PageWrapper/PageWrapper";
-import Button from "../../components/Button/Button";
-import moment from "moment";
-import { NavLink } from "react-router-dom";
-import DatePicker from "../../components/DatePicker/DatePicker";
+import React from 'react';
+import FromGroup from '../../components/FormGroup/FormGroup';
+import Input from '../../components/Input/Input';
+import PageWrapper from '../../components/PageWrapper/PageWrapper';
+import Button from '../../components/Button/Button';
+import moment from 'moment';
+import { NavLink } from 'react-router-dom';
+import DatePicker from '../../components/DatePicker/DatePicker';
+import {
+  addNewDate,
+  getDates,
+  deleteDate
+} from '../../services/data-de-entrega';
 
-const users = [
-  {
-    _id: "5c2ffca8602c74000493fb8a",
-    data: "2019-01-11T02:00:00.000Z",
-    senha: "12345",
-    __v: 0
-  },
-  {
-    _id: "5c3b9ed67288d100048539a0",
-    data: "2019-02-08T02:00:00.000Z",
-    senha: "123123",
-    __v: 0
-  }
-];
+const defaultData = {
+  data: new Date(),
+  senha: ''
+};
 
 const stateDefault = {
-  results: users,
+  results: [],
   isFetching: false,
-  data: {
-    data_da_entrega: new Date(),
-    token: ""
-  }
+  isLoading: false,
+  data: defaultData
 };
 
 class ListActions extends React.Component {
   state = {
     ...stateDefault
+  };
+
+  componentDidMount = () => {
+    this.fetchActionsDays();
+  };
+
+  fetchActionsDays = () => {
+    this.setState(
+      {
+        isFetching: true
+      },
+      async () => {
+        try {
+          const { datas } = await getDates();
+          this.setState({
+            isFetching: false,
+            results: datas
+          });
+        } catch (error) {}
+      }
+    );
   };
 
   onChangeHandler = ({ target: { value, name } }) => {
@@ -45,48 +59,86 @@ class ListActions extends React.Component {
     });
   };
 
+  onDeleteHandler = async _id => {
+    try {
+      await deleteDate({ _id });
+      this.fetchActionsDays();
+    } catch (error) {}
+  };
+
+  onSubmitHandler = e => {
+    e.preventDefault();
+    this.setState(
+      {
+        isLoading: true
+      },
+      async () => {
+        try {
+          await addNewDate({ ...this.state.data });
+          this.setState(
+            { isLoading: false, data: defaultData },
+            this.fetchActionsDays
+          );
+        } catch (error) {
+          this.setState({
+            isLoading: false,
+            data: defaultData
+          });
+        }
+      }
+    );
+  };
+
   render() {
     const { results, isFetching } = this.state;
+    const datesToDisabled = results.map(({ data }) => new Date(data));
     return (
-      <PageWrapper title="Lista de Entregas">
+      <PageWrapper title='Lista de Entregas'>
         {isFetching && (
-          <div className="p-center">
-            <i className="fas fa-spinner fs-4 color-primary rotate" />
+          <div className='p-center'>
+            <i className='fas fa-spinner fs-4 color-primary rotate' />
           </div>
         )}
-        <div className="m-bottom-15_">
-          <FromGroup title="Cadastrar Nova Entrega">
-            <div className="p-15 p-bottom-0">
-              <div className="grid">
-                <div className="sm-5-12">
+        <div className='m-bottom-15_'>
+          <FromGroup title='Cadastrar Nova Entrega'>
+            <div className='p-15 p-bottom-0'>
+              <div className='grid'>
+                <div className='sm-5-12'>
                   <DatePicker
-                    label="Data da Entrega"
-                    name="data_da_entrega"
+                    label='Data da Entrega'
+                    minDate={new Date()}
+                    name='data'
+                    excludeDates={datesToDisabled}
                     onChange={e => {
                       this.onChangeHandler({
                         target: {
-                          name: "data_da_entrega",
+                          name: 'data',
                           value: moment(e)
                             .utc()
                             .format()
                         }
                       });
                     }}
-                    value={new Date(this.state.data.data_da_entrega)}
+                    value={new Date(this.state.data.data)}
                   />
                 </div>
-                <div className="sm-5-12">
+                <div className='sm-5-12'>
                   <Input
-                    label="Senha:"
-                    name="token"
+                    label='Senha:'
+                    name='senha'
                     onChange={this.onChangeHandler}
-                    value={this.state.data.token}
-                    placeholder="Digite a senha da entrega"
+                    value={this.state.data.senha}
+                    placeholder='Digite a senha da entrega'
                   />
                 </div>
-                <div className="sm-2-12">
-                  <div className="d-flex d-flex-align-center h-100 m-bottom-20">
-                    <Button className="w-100" type="primary">
+                <div className='sm-2-12'>
+                  <div className='d-flex d-flex-align-center h-100 m-bottom-20'>
+                    <Button
+                      disabled={!this.state.data.senha}
+                      onClick={this.onSubmitHandler}
+                      className='w-100'
+                      type='primary'
+                    >
                       Salvar
                     </Button>
                   </div>
@@ -98,13 +150,13 @@ class ListActions extends React.Component {
         </div>
         {!isFetching && results.length > 0 && (
           <div>
-            <div className="table-wrapper m-bottom-20">
-              <table className="table table-bordered">
+            <div className='table-wrapper m-bottom-20'>
+              <table className='table table-bordered'>
                 <thead>
                   <tr>
-                    <th className="fs-7" />
-                    <th className="fs-7">Senha</th>
-                    <th className="fs-7">Data</th>
+                    <th className='fs-7' />
+                    <th className='fs-7'>Senha</th>
+                    <th className='fs-7'>Data</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -112,22 +164,27 @@ class ListActions extends React.Component {
                     const { _id, senha, data } = result;
                     return (
                       <tr key={_id}>
-                        <td className="fs-7">
+                        <td className='fs-7'>
                           {false && (
-                            <Button icon type="primary">
+                            <Button icon type='primary'>
                               Salvar
                             </Button>
                           )}
-                          <Button className="m-left-10" icon>
+                          <Button className='m-left-10' icon>
                             Editar
                           </Button>
-                          <Button className="m-left-10" icon type="danger">
+                          <Button
+                            onClick={() => this.onDeleteHandler(_id)}
+                            className='m-left-10'
+                            icon
+                            type='danger'
+                          >
                             Excluir
                           </Button>
                         </td>
-                        <td className="fs-7">{senha}</td>
-                        <td className="fs-7">
-                          {moment(data).format("DD/MM/YYYY")}
+                        <td className='fs-7'>{senha}</td>
+                        <td className='fs-7'>
+                          {moment(data).format('DD/MM/YYYY')}
                         </td>
                       </tr>
                     );
