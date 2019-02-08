@@ -2,6 +2,7 @@
 import * as React from "react";
 import { getAuth } from "../../services/localStorage";
 import type { BrowserHistory } from "history";
+import { hasValidToken } from "../../services/user";
 
 /*
 Improvement:
@@ -13,22 +14,40 @@ type Props = {
   history: BrowserHistory
 };
 
-type State = {};
+type State = {
+  query: boolean,
+  isValid: boolean
+};
 
 class RestrictPage extends React.Component<Props, State> {
+  state = {
+    query: false,
+    isValid: false
+  };
   componentDidMount = () => {
-    // this.hasAuth();
+    this.hasAuth();
   };
 
-  hasAuth = async () => {
-    try {
-      const { username } = await getAuth();
-      if (!username) {
-        throw new Error();
+  hasAuth = () => {
+    this.setState(
+      {
+        query: true,
+        isValid: false
+      },
+      async () => {
+        try {
+          const { token } = await getAuth();
+          const { isValid } = await hasValidToken({ token });
+          if (!isValid) {
+            this.redirectToLogin();
+            return false;
+          }
+          this.setState({ query: false, isValid: true });
+        } catch (error) {
+          this.redirectToLogin();
+        }
       }
-    } catch (error) {
-      this.redirectToLogin();
-    }
+    );
   };
 
   redirectToLogin = () => {
@@ -36,8 +55,12 @@ class RestrictPage extends React.Component<Props, State> {
   };
 
   render() {
+    const { query, isValid } = this.state;
     const { component: Component, ...otherProps } = this.props;
-    return <Component {...otherProps} />;
+    if (!query && isValid) {
+      return <Component {...otherProps} />;
+    }
+    return null;
   }
 }
 

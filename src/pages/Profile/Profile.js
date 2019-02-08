@@ -1,18 +1,49 @@
-import React from "react";
-import FromGroup from "../../components/FormGroup/FormGroup";
-import Input from "../../components/Input/Input";
-import PageWrapper from "../../components/PageWrapper/PageWrapper";
-import Button from "../../components/Button/Button";
+import React from 'react';
+import FromGroup from '../../components/FormGroup/FormGroup';
+import Input from '../../components/Input/Input';
+import PageWrapper from '../../components/PageWrapper/PageWrapper';
+import Button from '../../components/Button/Button';
+import ProfileForm from '../../components/ProfileForm';
+import PartnesForm from '../../components/PartnesForm';
+import {
+  searchUser,
+  addUserAsPartner,
+  getPartners,
+  removeUserAsPartner,
+  getUserInfo,
+  updateUser
+} from '../../services/user';
+import _get from 'lodash/get';
+import { getAuth } from '../../services/localStorage';
+import {
+  updateMessage,
+  updateErrorMessage
+} from '../../redux/store/Feedback/feedback';
+
+const partnersDefault = {
+  isQuerying: false,
+  isAdding: false,
+  isRemoving: false,
+  value: '',
+  results: [],
+  adds: []
+};
 
 const stateDefault = {
   data: {
-    nome: "",
-    telefone: "",
-    cidade: "",
-    nascimento: "",
-    telefone_de_emergencia: "",
-    nome_de_emergencia: ""
-  }
+    queryUser: false,
+    _id: '',
+    nome: '',
+    sobrenome: '',
+    telefone: '',
+    cidade: '',
+    nascimento: '',
+    numeroDeEmergencia: '',
+    nomeDeEmergencia: ''
+  },
+  isLoading: false,
+  isEditing: false,
+  partners: partnersDefault
 };
 
 class Profile extends React.Component {
@@ -20,82 +51,227 @@ class Profile extends React.Component {
     ...stateDefault
   };
 
-  onChangeHandler = ({ target: { name, value } }) =>
+  componentDidMount = () => {
+    this.fetchUserInfo();
+    this.fetchPartners();
+  };
+
+  fetchUserInfo = () => {
+    this.setState(
+      { data: { ...this.state.data, queryUser: true } },
+      async () => {
+        try {
+          const { _id } = await getAuth();
+          const { user } = await getUserInfo(_id);
+          this.setState({
+            data: {
+              ...this.state.data,
+              ...user,
+              queryUser: false
+            }
+          });
+        } catch (error) {}
+      }
+    );
+  };
+
+  fetchPartners = () => {
+    this.setState(
+      { partners: { ...this.state.partners, isQuerying: true } },
+      async () => {
+        try {
+          const { _id, token } = await getAuth();
+          const { partners } = await getPartners(_id);
+          this.setState({
+            partners: {
+              ...this.state.partners,
+              adds: partners,
+              isQuerying: false
+            }
+          });
+        } catch (error) {}
+      }
+    );
+  };
+
+  onChangeHandler = ({ target: { name, value } }) => {
     this.setState({
       data: {
         ...this.state.data,
         [name]: value
       }
     });
+  };
+
+  fetchSearchUser = () => {
+    this.setState(
+      { partners: { ...this.state.partners, isQuerying: true } },
+      async () => {
+        try {
+          const search = _get(this.state, 'partners.value');
+          const { user } = await searchUser(search);
+          this.setState({
+            partners: {
+              ...this.state.partners,
+              results: user,
+              isQuerying: false
+            }
+          });
+        } catch (error) {}
+      }
+    );
+  };
+
+  onQueryPartners = ({ target: { value } }) => {
+    this.setState(
+      { partners: { ...this.state.partners, results: [], value } },
+      () => {
+        if (value.length > 4) {
+          this.fetchSearchUser();
+        }
+      }
+    );
+  };
+
+  addPartnerHandler = (partner_id, event) => {
+    event.preventDefault();
+    this.setState(
+      {
+        partners: { ...this.state.partners, isAdding: true }
+      },
+      async () => {
+        try {
+          const { _id } = await getAuth();
+          const promises = [
+            addUserAsPartner({
+              _id,
+              partner_id
+            }),
+            addUserAsPartner({
+              _id: partner_id,
+              partner_id: _id
+            })
+          ];
+          await Promise.all(promises);
+          this.setState(
+            { partners: partnersDefault, isEditing: false },
+            this.fetchPartners
+          );
+          this.props.dispatch(updateMessage('Adicionado com sucesso.'));
+        } catch (error) {}
+      }
+    );
+  };
+
+  removePartnerHandler = (idToRemove, event) => {
+    event.preventDefault();
+    this.setState(
+      {
+        partners: { ...this.state.partners, isRemoving: true }
+      },
+      async () => {
+        try {
+          const { _id } = await getAuth();
+          const promises = [
+            removeUserAsPartner({
+              _id,
+              idToRemove
+            }),
+            removeUserAsPartner({
+              _id: idToRemove,
+              idToRemove: _id
+            })
+          ];
+          await Promise.all(promises);
+          this.setState({ partners: partnersDefault }, this.fetchPartners);
+          this.props.dispatch(updateMessage('Removido com sucesso.'));
+        } catch (error) {}
+      }
+    );
+  };
+
+  filterResultsToAdd = () => {
+    const {
+      partners: { results, adds }
+    } = this.state;
+    const userID = _get(this.state, 'data._id');
+    return results.filter(({ _id }) => {
+      let returned = true;
+      adds.forEach(({ _id: add_id }) => {
+        if (_id === add_id) {
+          returned = false;
+        }
+      });
+      if (_id === userID) {
+        returned = false;
+      }
+
+      return returned;
+    });
+  };
+
+  onUpdateUser = () => {
+    this.setState(
+      {
+        isLoading: true
+      },
+      async () => {
+        try {
+          await updateUser({ ...this.state.data });
+          this.setState({ isLoading: false, isEditing: false });
+          this.props.dispatch(updateMessage('Perfil alterado com sucesso.'));
+        } catch (error) {}
+      }
+    );
+  };
+
+  onEditHandler = () => {
+    this.setState({
+      isEditing: !this.state.isEditing
+    });
+  };
+
   render() {
+    const partnersToShow = this.filterResultsToAdd();
     return (
-      <PageWrapper>
-        <FromGroup title="Meu Cadastro">
-          <div className="p-15 p-bottom-0">
-            <div className="grid">
-              <div className="sm-6-12">
-                <Input
-                  label="Nome:"
-                  name="nome"
-                  onChange={this.onChangeHandler}
-                  value={this.state.data.nome}
-                  placeholder="Digite seu nome"
-                />
-              </div>
-              <div className="sm-6-12">
-                <Input
-                  label="Telefone:"
-                  name="telefone"
-                  onChange={this.onChangeHandler}
-                  value={this.state.data.telefone}
-                  placeholder="Digite seu telefone"
-                />
-              </div>
-              <div className="sm-6-12">
-                <Input
-                  label="Cidade:"
-                  name="cidade"
-                  onChange={this.onChangeHandler}
-                  value={this.state.data.cidade}
-                  placeholder="Digite sua cidade"
-                />
-              </div>
-              <div className="sm-6-12">
-                <Input
-                  label="Nascimento:"
-                  name="nascimento"
-                  onChange={this.onChangeHandler}
-                  value={this.state.data.nascimento}
-                  placeholder="Digite seu nascimento"
-                />
-              </div>
-              <div className="sm-6-12">
-                <Input
-                  label="Telefone de Emergência:"
-                  name="telefone_de_emergencia"
-                  onChange={this.onChangeHandler}
-                  value={this.state.data.telefone_de_emergencia}
-                  placeholder="Digite um telefone de emergência"
-                />
-              </div>
-              <div className="sm-6-12">
-                <Input
-                  label="Nome do contato de emergência:"
-                  name="nome_de_emergencia"
-                  onChange={this.onChangeHandler}
-                  value={this.state.data.nome_de_emergencia}
-                  placeholder="Digite o nome do contato de emergência"
-                />
-              </div>
+      <PageWrapper title='Dados Pessoais'>
+        <div className='m-bottom-40'>
+          <FromGroup title='Dados pessoais' formName='Dados do voluntário'>
+            <ProfileForm
+              {...this.state.data}
+              isDisabled={this.state.isEditing}
+              onChangeHandler={this.onChangeHandler}
+            />
+          </FromGroup>
+          <FromGroup title='Conjugue e familiares no GAS'>
+            <PartnesForm
+              {...this.state.partners}
+              results={partnersToShow}
+              isDisabled={this.state.isEditing}
+              removePartner={this.removePartnerHandler}
+              addPartner={this.addPartnerHandler}
+              onChange={this.onQueryPartners}
+            />
+          </FromGroup>
+          <div className='d-flex d-flex-space-between'>
+            <div>
+              {!this.state.isEditing ? (
+                <Button onClick={this.onEditHandler} className='m-left-10'>
+                  Editar
+                </Button>
+              ) : (
+                <div>
+                  <Button onClick={this.onUpdateUser} type='primary'>
+                    Salvar
+                  </Button>
+                  <Button onClick={this.onEditHandler} className='m-left-10'>
+                    Cancelar
+                  </Button>
+                </div>
+              )}
             </div>
+            <Button type='danger'>Alterar minha senha</Button>
           </div>
-        </FromGroup>
-        <div className="d-flex d-flex-space-between">
-          <div>
-            <Button type="primary">Salvar</Button>
-            <Button className="m-left-10">Editar</Button>
-          </div>
-          <Button type="danger">Excluir meu perfil</Button>
         </div>
       </PageWrapper>
     );

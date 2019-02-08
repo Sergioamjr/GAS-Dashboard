@@ -3,7 +3,7 @@ import RequestWithParams from "./utils";
 import { BACKEND } from "../APP-CONFIG";
 
 interface Params {
-  username: string;
+  email: string;
   password: string;
 }
 
