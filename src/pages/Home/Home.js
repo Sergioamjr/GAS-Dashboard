@@ -9,6 +9,9 @@ import ProfileForm from '../../components/ProfileForm';
 import ActionInfo from '../../components/ActionInfo/ActionInfo';
 import { getAuth } from '../../services/localStorage';
 import { getUserInfo } from '../../services/user';
+import { getNextActionDate } from '../../services/data-de-entrega';
+import _get from 'lodash/get';
+import moment from 'moment';
 
 const stateDefault = {
   data: {
@@ -27,10 +30,15 @@ const stateDefault = {
     ira_de_carro: true,
     autoriza: true,
     primeira_vez_no_gas: false
+  },
+  details: {
+    isFetching: false,
+    nextDate: '',
+    noHasDate: false
   }
 };
 
-class Profile extends React.Component {
+class Home extends React.Component {
   state = {
     ...stateDefault
   };
@@ -53,7 +61,41 @@ class Profile extends React.Component {
               queryUser: false
             }
           });
+          this.fetchAllData();
         } catch (error) {}
+      }
+    );
+  };
+
+  fetchAllData = () => {
+    this.fetchNextDateAvaliable();
+  };
+
+  fetchNextDateAvaliable = () => {
+    this.setState(
+      {
+        details: {
+          ...this.state.details,
+          isFetching: true
+        }
+      },
+      async () => {
+        try {
+          const date = await getNextActionDate();
+          const nextDate = _get(date, 'dataProxima', '');
+          !!nextDate &&
+            this.setState({
+              details: {
+                ...this.state.details,
+                nextDate: moment(nextDate).format('DD/MM/YYYY')
+              }
+            });
+        } catch (error) {
+          this.setState({
+            isFetching: false,
+            noHasDate: true
+          });
+        }
       }
     );
   };
@@ -80,12 +122,15 @@ class Profile extends React.Component {
     this.setState({ partners: { ...this.state.partners, value } });
   };
   render() {
+    const nextDate = _get(this.state, 'details.nextDate');
     return (
       <PageWrapper title='Voluntariar-se'>
-        <h2 className='fw-300 color-theme m-bottom-30'>
-          Data da próxima entrega:{' '}
-          <span className='fw-bold_ d-block fs-3'>08/02/2019</span>
-        </h2>
+        {nextDate && (
+          <h2 className='fw-300 color-theme m-bottom-30'>
+            Data da próxima entrega:{' '}
+            <span className='fw-bold_ d-block fs-3'>{nextDate}</span>
+          </h2>
+        )}
         <div className='m-bottom-20 background-success color-white p-center p-10'>
           Você já está cadastrado na próxima entrega.
         </div>
@@ -125,4 +170,4 @@ class Profile extends React.Component {
   }
 }
 
-export default Profile;
+export default Home;
