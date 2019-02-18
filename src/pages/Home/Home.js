@@ -100,13 +100,16 @@ class Home extends React.Component {
     );
   };
 
-  onChangeHandler = ({ target: { name, value } }) =>
+  onChangeHandler = ({ target: { name, value } }) => {
+    console.log(name, value);
+
     this.setState({
       data: {
         ...this.state.data,
         [name]: value
       }
     });
+  };
 
   onChangeActionHandler = ({ target: { name, value } }, reset = {}) => {
     this.setState({
@@ -151,6 +154,7 @@ class Home extends React.Component {
             <ProfileForm
               {...this.state.data}
               disabledAll
+              hideDetails
               onChangeHandler={this.onChangeHandler}
             />
           </FromGroup>

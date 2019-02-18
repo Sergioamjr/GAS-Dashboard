@@ -19,6 +19,7 @@ import {
   updateMessage,
   updateErrorMessage
 } from '../../redux/store/Feedback/feedback';
+import { getRotas } from '../../services/data-de-entrega';
 
 const partnersDefault = {
   isQuerying: false,
@@ -39,11 +40,14 @@ const stateDefault = {
     cidade: '',
     nascimento: '',
     numeroDeEmergencia: '',
-    nomeDeEmergencia: ''
+    nomeDeEmergencia: '',
+    rotaDefault: '',
+    lider: false
   },
   isLoading: false,
   isEditing: false,
-  partners: partnersDefault
+  partners: partnersDefault,
+  rotas: []
 };
 
 class Profile extends React.Component {
@@ -61,9 +65,14 @@ class Profile extends React.Component {
       { data: { ...this.state.data, queryUser: true } },
       async () => {
         try {
+          const urlID = _get(this.props, 'match.params.id');
           const { _id } = await getAuth();
-          const { user } = await getUserInfo(_id);
+          const queryID = urlID || _id;
+          const { user } = await getUserInfo(queryID);
+
+          const { rotas } = await getRotas();
           this.setState({
+            rotas,
             data: {
               ...this.state.data,
               ...user,
@@ -80,8 +89,10 @@ class Profile extends React.Component {
       { partners: { ...this.state.partners, isQuerying: true } },
       async () => {
         try {
-          const { _id, token } = await getAuth();
-          const { partners } = await getPartners(_id);
+          const { _id } = await getAuth();
+          const urlID = _get(this.props, 'match.params.id');
+          const queryID = urlID || _id;
+          const { partners } = await getPartners(queryID);
           this.setState({
             partners: {
               ...this.state.partners,
@@ -142,14 +153,16 @@ class Profile extends React.Component {
       async () => {
         try {
           const { _id } = await getAuth();
+          const urlID = _get(this.props, 'match.params.id');
+          const queryID = urlID || _id;
           const promises = [
             addUserAsPartner({
-              _id,
+              _id: queryID,
               partner_id
             }),
             addUserAsPartner({
               _id: partner_id,
-              partner_id: _id
+              partner_id: queryID
             })
           ];
           await Promise.all(promises);
@@ -172,14 +185,16 @@ class Profile extends React.Component {
       async () => {
         try {
           const { _id } = await getAuth();
+          const urlID = _get(this.props, 'match.params.id');
+          const queryID = urlID || _id;
           const promises = [
             removeUserAsPartner({
-              _id,
+              _id: queryID,
               idToRemove
             }),
             removeUserAsPartner({
               _id: idToRemove,
-              idToRemove: _id
+              idToRemove: queryID
             })
           ];
           await Promise.all(promises);
@@ -231,14 +246,20 @@ class Profile extends React.Component {
     });
   };
 
+  onBackHandler = () => {
+    this.props.history.goBack();
+  };
+
   render() {
     const partnersToShow = this.filterResultsToAdd();
+    const urlID = _get(this.props, 'match.params.id');
     return (
       <PageWrapper title='Dados Pessoais'>
         <div className='m-bottom-40'>
           <FromGroup title='Dados pessoais' formName='Dados do voluntário'>
             <ProfileForm
               {...this.state.data}
+              rotas={this.state.rotas}
               isDisabled={this.state.isEditing}
               onChangeHandler={this.onChangeHandler}
             />
@@ -255,6 +276,7 @@ class Profile extends React.Component {
           </FromGroup>
           <div className='d-flex d-flex-space-between'>
             <div>
+              {urlID && <Button onClick={this.onBackHandler}>Voltar</Button>}
               {!this.state.isEditing ? (
                 <Button onClick={this.onEditHandler} className='m-left-10'>
                   Editar
@@ -270,7 +292,7 @@ class Profile extends React.Component {
                 </div>
               )}
             </div>
-            <Button type='danger'>Alterar minha senha</Button>
+            {/* <Button type='danger'>Alterar minha senha</Button> */}
           </div>
         </div>
       </PageWrapper>

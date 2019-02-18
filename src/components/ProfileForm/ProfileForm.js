@@ -84,6 +84,46 @@ class ProfileForm extends React.Component {
               placeholder='Digite o nome do contato de emergência'
             />
           </div>
+          {!this.props.hideDetails && (
+            <div className='sm-6-12'>
+              <div className='m-bottom-30'>
+                <label className='label d-block'>É lider?</label>
+                <select
+                  value={this.props.lider}
+                  onChange={this.props.onChangeHandler}
+                  name='lider'
+                  disabled={!this.props.isDisabled}
+                >
+                  <option value={false}>Não</option>
+                  <option value={true}>Sim</option>
+                </select>
+              </div>
+            </div>
+          )}
+          {!this.props.hideDetails &&
+            this.props.rotas &&
+            this.props.rotas.length > 0 && (
+              <div className='sm-6-12'>
+                <div className='m-bottom-30'>
+                  <label className='label d-block'>Rota padrão</label>
+                  <select
+                    value={this.props.rotaDefault}
+                    onChange={this.props.onChangeHandler}
+                    name='rotaDefault'
+                    disabled={!this.props.isDisabled}
+                  >
+                    <option />
+                    {this.props.rotas.map(({ rota, _id }) => {
+                      return (
+                        <option key={_id} value={rota}>
+                          {rota}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+              </div>
+            )}
         </div>
       </div>
     );
