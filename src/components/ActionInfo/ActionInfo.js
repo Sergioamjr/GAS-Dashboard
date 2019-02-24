@@ -1,52 +1,47 @@
-import React from "react";
-import Input from "../Input/Input";
-import Checkbox from "../Checkbox/Checkbox";
+import React from 'react';
+import Input from '../Input/Input';
+import Checkbox from '../Checkbox/Checkbox';
 
 class ActionInfo extends React.Component {
   render() {
     return (
-      <div className="p-15 p-bottom-0">
-        <div className="grid">
-          <div className="sm-3-12">
-            <label
-              htmlFor="primeira_vez_no_gas"
-              className="label d-block m-bottom-60"
-            >
+      <div className='p-15 p-bottom-0'>
+        <div className='grid'>
+          <div className='sm-3-12'>
+            <label htmlFor='first_time' className='label d-block m-bottom-60'>
               Será sua primeira vez no GAS?
             </label>
-            <div className="m-top-10 m-bottom-10">
+            <div className='m-top-10 m-bottom-10'>
               <Checkbox
-                label="Sim"
-                name="primeira_vez_no_gas"
+                label='Sim'
+                name='first_time'
                 onChange={this.props.onChangeHandler}
-                checked={this.props.primeira_vez_no_gas}
+                checked={this.props.first_time}
               />
             </div>
           </div>
-          <div className="sm-3-12">
-            <label htmlFor="ira_de_carro" className="label d-block m-bottom-60">
+          <div className='sm-3-12'>
+            <label htmlFor='withCar' className='label d-block m-bottom-60'>
               Você irá de carro?
             </label>
-            <div className="m-top-10 m-bottom-10">
+            <div className='m-top-10 m-bottom-10'>
               <Checkbox
-                label="Sim"
-                name="ira_de_carro"
-                onChange={e =>
-                  this.props.onChangeHandler(e, { modelo_do_carro: "" })
-                }
-                checked={this.props.ira_de_carro}
+                label='Sim'
+                name='withCar'
+                onChange={e => this.props.onChangeHandler(e, { carModel: '' })}
+                checked={this.props.withCar}
               />
             </div>
           </div>
 
-          <div className="sm-6-12">
+          <div className='sm-6-12'>
             <Input
-              disabled={!this.props.ira_de_carro}
-              label="Modelo do carro:"
-              name="modelo_do_carro"
+              disabled={!this.props.withCar}
+              label='Modelo do carro:'
+              name='carModel'
               onChange={this.props.onChangeHandler}
-              value={this.props.modelo_do_carro}
-              placeholder="Digite o modelo do seu carro"
+              value={this.props.carModel}
+              placeholder='Digite o modelo do seu carro'
             />
           </div>
         </div>

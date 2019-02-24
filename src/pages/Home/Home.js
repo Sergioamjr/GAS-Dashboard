@@ -12,10 +12,15 @@ import { getUserInfo } from '../../services/user';
 import { getNextActionDate } from '../../services/data-de-entrega';
 import _get from 'lodash/get';
 import moment from 'moment';
+import WithLoading from './../../utils/WithLoading';
+import {
+  registerVoluntary,
+  isRegistered,
+  deleteVoluntary
+} from '../../services/voluntary';
 
 const stateDefault = {
   data: {
-    queryUser: false,
     _id: '',
     nome: '',
     sobrenome: '',
@@ -26,14 +31,16 @@ const stateDefault = {
     nomeDeEmergencia: ''
   },
   action: {
-    modelo_do_carro: '',
-    ira_de_carro: true,
-    autoriza: true,
-    primeira_vez_no_gas: false
+    carModel: '',
+    withCar: true,
+    first_time: false,
+    _id: ''
   },
   details: {
-    isFetching: false,
-    nextDate: '',
+    isFetching: true,
+    senha: '',
+    _id: '',
+    dataProxima: '',
     noHasDate: false
   }
 };
@@ -47,62 +54,69 @@ class Home extends React.Component {
     this.fetchUserInfo();
   };
 
-  fetchUserInfo = () => {
-    this.setState(
-      { data: { ...this.state.data, queryUser: true } },
-      async () => {
-        try {
-          const { _id } = await getAuth();
-          const { user } = await getUserInfo(_id);
-          this.setState({
-            data: {
-              ...this.state.data,
-              ...user,
-              queryUser: false
-            }
-          });
-          this.fetchAllData();
-        } catch (error) {}
-      }
-    );
+  fetchUserInfo = async () => {
+    try {
+      const { _id } = await getAuth();
+      const { user } = await getUserInfo(_id);
+      this.setState(
+        {
+          data: {
+            ...this.state.data,
+            ...user
+          }
+        },
+        this.fetchAllData
+      );
+    } catch (error) {}
   };
 
   fetchAllData = () => {
     this.fetchNextDateAvaliable();
   };
 
-  fetchNextDateAvaliable = () => {
-    this.setState(
-      {
+  isAlreadyRegistered = async () => {
+    const action_id = _get(this.state, 'details._id');
+    const user_id = _get(this.state, 'data._id');
+    try {
+      const { response, voluntary } = await isRegistered({
+        action_id,
+        user_id
+      });
+      this.setState({
+        action: {
+          ...this.state.action,
+          ...voluntary
+        },
         details: {
-          ...this.state.details,
-          isFetching: true
+          ...this.state.details
         }
-      },
-      async () => {
-        try {
-          const date = await getNextActionDate();
-          const nextDate = _get(date, 'dataProxima', '');
-          !!nextDate &&
-            this.setState({
-              details: {
-                ...this.state.details,
-                nextDate: moment(nextDate).format('DD/MM/YYYY')
-              }
-            });
-        } catch (error) {
-          this.setState({
+      });
+    } catch (error) {}
+  };
+
+  fetchNextDateAvaliable = async () => {
+    try {
+      const date = await getNextActionDate();
+
+      this.setState(
+        {
+          details: {
+            ...this.state.details,
             isFetching: false,
-            noHasDate: true
-          });
-        }
-      }
-    );
+            ...date
+          }
+        },
+        this.isAlreadyRegistered
+      );
+    } catch (error) {
+      this.setState({
+        isFetching: false,
+        noHasDate: true
+      });
+    }
   };
 
   onChangeHandler = ({ target: { name, value } }) => {
-    console.log(name, value);
-
     this.setState({
       data: {
         ...this.state.data,
@@ -124,19 +138,69 @@ class Home extends React.Component {
   onQueryPartners = ({ target: { value } }) => {
     this.setState({ partners: { ...this.state.partners, value } });
   };
+
+  onSubmitSubscribe = () => async done => {
+    try {
+      const action_date = _get(this.state, 'details.dataProxima');
+      const action_id = _get(this.state, 'details._id');
+      const user_id = _get(this.state, 'data._id');
+      const nome = _get(this.state, 'data.nome');
+      const first_time = _get(this.state, 'action.first_time');
+      const withCar = _get(this.state, 'action.withCar');
+      const carModel = _get(this.state, 'action.carModel');
+
+      const response = await registerVoluntary({
+        params: {
+          first_time,
+          carModel,
+          withCar,
+          action_date,
+          action_id,
+          user_id,
+          nome
+        }
+      });
+      done();
+      this.fetchAllData();
+    } catch (error) {
+      done();
+    }
+  };
+
+  onDeleteSubscribe = () => async done => {
+    try {
+      const _id = _get(this.state, 'action._id');
+      await deleteVoluntary({ _id });
+      this.setState({
+        action: {
+          ...stateDefault.action
+        }
+      });
+      done();
+      this.fetchAllData();
+    } catch (error) {}
+  };
+
   render() {
-    const nextDate = _get(this.state, 'details.nextDate');
+    const dataProxima = _get(this.state, 'details.dataProxima');
     return (
-      <PageWrapper title='Voluntariar-se'>
-        {nextDate && (
+      <PageWrapper
+        title='Voluntariar-se'
+        loading={this.state.details.isFetching}
+      >
+        {dataProxima && (
           <h2 className='fw-300 color-theme m-bottom-30'>
             Data da próxima entrega:{' '}
-            <span className='fw-bold_ d-block fs-3'>{nextDate}</span>
+            <span className='fw-bold_ d-block fs-3'>
+              {moment(dataProxima).format('DD/MM/YYYY')}
+            </span>
           </h2>
         )}
-        <div className='m-bottom-20 background-success color-white p-center p-10'>
-          Você já está cadastrado na próxima entrega.
-        </div>
+        {this.state.action._id && (
+          <div className='m-bottom-20 background-success color-white p-center p-10'>
+            <marquee>Você já está cadastrado na próxima entrega.</marquee>
+          </div>
+        )}
         <div className='m-bottom-40'>
           <FromGroup
             title='Confirme seus dados pessoais'
@@ -161,8 +225,23 @@ class Home extends React.Component {
 
           <div className='d-flex d-flex-space-between'>
             <div>
-              <Button type='primary'>Salvar</Button>
-              <Button className='m-left-10'>Editar</Button>
+              {!this.state.action._id ? (
+                <Button
+                  loading={this.props.onSubmitSubscribe.isLoading ? 1 : 0}
+                  onClick={this.props.onSubmitSubscribe.fn}
+                  type='primary'
+                >
+                  Salvar Cadastro
+                </Button>
+              ) : (
+                <Button
+                  loading={this.props.onDeleteSubscribe.isLoading ? 1 : 0}
+                  onClick={this.props.onDeleteSubscribe.fn}
+                  type='danger'
+                >
+                  Excluir Cadastro
+                </Button>
+              )}
             </div>
             <NavLink to='/meu-perfil'>
               <Button>Editar Perfil</Button>
@@ -174,4 +253,7 @@ class Home extends React.Component {
   }
 }
 
-export default Home;
+export default WithLoading({
+  onSubmitSubscribe: 'onSubmitSubscribe',
+  onDeleteSubscribe: 'onDeleteSubscribe'
+})(Home);

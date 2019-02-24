@@ -21,10 +21,13 @@ class PartnesForm extends React.Component {
               <div className='grid m-bottom-15'>
                 {adds.map((add, index) => {
                   const { nome, sobrenome, _id } = add;
+
                   return (
                     <div key={index} className='sm-6-12 '>
                       <div className='d-flex d-flex-space-between d-flex-align-center p-5 background-lighter m-bottom-10'>
-                        <p>{`${nome} ${sobrenome}`}</p>
+                        <p>{`${nome ? nome : ''} ${
+                          sobrenome ? sobrenome : ''
+                        }`}</p>
                         <Button
                           onClick={e => removePartner(_id, e)}
                           small
@@ -67,7 +70,9 @@ class PartnesForm extends React.Component {
                   return (
                     <div key={index} className='sm-6-12 '>
                       <div className='d-flex d-flex-space-between d-flex-align-center p-5 background-lighter m-bottom-10'>
-                        <p>{`${nome} ${sobrenome}`}</p>
+                        <p>{`${nome ? nome : ''} ${
+                          sobrenome ? sobrenome : ''
+                        }`}</p>
                         <Button
                           onClick={e => addPartner(_id, e)}
                           small

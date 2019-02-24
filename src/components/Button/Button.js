@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 
 const mountClassNames = props => {
   const {
-    className = "",
+    className = '',
     small,
     icon,
     type,
@@ -32,7 +32,7 @@ const Button = props => {
       className={className}
     >
       {children}
-      {!!loading && <i className="m-left-10 fas fa-sync rotate" />}
+      {!!loading && <i className='m-left-10 fas fa-sync rotate' />}
     </button>
   );
 };
