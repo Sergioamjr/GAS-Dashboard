@@ -276,15 +276,19 @@ class Profile extends React.Component {
           </FromGroup>
           <div className='d-flex d-flex-space-between'>
             <div>
-              {urlID && <Button onClick={this.onBackHandler}>Voltar</Button>}
               {!this.state.isEditing ? (
-                <Button onClick={this.onEditHandler} className='m-left-10'>
-                  Editar
-                </Button>
+                <div>
+                  {urlID && (
+                    <Button onClick={this.onBackHandler}>Voltar</Button>
+                  )}
+                  <Button onClick={this.onEditHandler} className='m-left-10'>
+                    Editar
+                  </Button>
+                </div>
               ) : (
                 <div>
                   <Button onClick={this.onUpdateUser} type='primary'>
-                    Salvar
+                    Salvar alterações
                   </Button>
                   <Button onClick={this.onEditHandler} className='m-left-10'>
                     Cancelar

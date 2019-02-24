@@ -17,3 +17,7 @@ export const isRegistered = async ({ user_id, action_id }) => {
 export const deleteVoluntary = async params => {
   return await promiseFactory('delete-voluntary', params, 'delete');
 };
+
+export const voluntaryHistory = async params => {
+  return await promiseFactory('has-history', params);
+};

@@ -7,20 +7,24 @@ class ActionInfo extends React.Component {
     return (
       <div className='p-15 p-bottom-0'>
         <div className='grid'>
-          <div className='sm-3-12'>
-            <label htmlFor='first_time' className='label d-block m-bottom-60'>
-              Será sua primeira vez no GAS?
-            </label>
-            <div className='m-top-10 m-bottom-10'>
-              <Checkbox
-                label='Sim'
-                name='first_time'
-                onChange={this.props.onChangeHandler}
-                checked={this.props.first_time}
-              />
+          {!this.props.hideFirstTime && (
+            <div className='sm-3-12'>
+              <label htmlFor='first_time' className='label d-block m-bottom-60'>
+                Será sua primeira vez no GAS?
+              </label>
+              <div className='m-top-10 m-bottom-10'>
+                <Checkbox
+                  label='Sim'
+                  name='first_time'
+                  onChange={this.props.onChangeHandler}
+                  checked={this.props.first_time}
+                />
+              </div>
             </div>
-          </div>
-          <div className='sm-3-12'>
+          )}
+          <div
+            className={` ${!this.props.hideFirstTime ? 'sm-3-12' : 'sm-6-12'} `}
+          >
             <label htmlFor='withCar' className='label d-block m-bottom-60'>
               Você irá de carro?
             </label>

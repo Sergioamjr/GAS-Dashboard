@@ -94,14 +94,14 @@ class ListRotas extends React.Component {
   render() {
     const { results, isFetching } = this.state;
     return (
-      <PageWrapper title='Lista de Entregas'>
+      <PageWrapper title='Lista de Rotas'>
         {isFetching && (
           <div className='p-center'>
             <i className='fas fa-spinner fs-4 color-primary rotate' />
           </div>
         )}
         <div className='m-bottom-15_'>
-          <FromGroup title='Cadastrar Nova Entrega'>
+          <FromGroup title='Cadastrar Nova Rota'>
             <div className='p-15 p-bottom-0'>
               <div className='grid'>
                 <div className='sm-10-12'>
@@ -121,7 +121,7 @@ class ListRotas extends React.Component {
                       className='w-100'
                       type='primary'
                     >
-                      Salvar
+                      Adicionar
                     </Button>
                   </div>
                 </div>
