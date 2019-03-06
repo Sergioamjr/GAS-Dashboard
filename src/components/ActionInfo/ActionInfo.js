@@ -4,7 +4,6 @@ import Checkbox from '../Checkbox/Checkbox';
 
 class ActionInfo extends React.Component {
   render() {
-    console.log(this.props.disabled);
     return (
       <div className='p-15 p-bottom-0'>
         <div className='grid'>
