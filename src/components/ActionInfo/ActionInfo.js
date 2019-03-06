@@ -4,6 +4,7 @@ import Checkbox from '../Checkbox/Checkbox';
 
 class ActionInfo extends React.Component {
   render() {
+    console.log(this.props.disabled);
     return (
       <div className='p-15 p-bottom-0'>
         <div className='grid'>
@@ -15,6 +16,7 @@ class ActionInfo extends React.Component {
               <div className='m-top-10 m-bottom-10'>
                 <Checkbox
                   label='Sim'
+                  disabled={this.props.disabled}
                   name='first_time'
                   onChange={this.props.onChangeHandler}
                   checked={this.props.first_time}
@@ -31,6 +33,7 @@ class ActionInfo extends React.Component {
             <div className='m-top-10 m-bottom-10'>
               <Checkbox
                 label='Sim'
+                disabled={this.props.disabled}
                 name='withCar'
                 onChange={e => this.props.onChangeHandler(e, { carModel: '' })}
                 checked={this.props.withCar}
@@ -40,7 +43,7 @@ class ActionInfo extends React.Component {
 
           <div className='sm-6-12'>
             <Input
-              disabled={!this.props.withCar}
+              disabled={!this.props.withCar || this.props.disabled}
               label='Modelo do carro:'
               name='carModel'
               onChange={this.props.onChangeHandler}

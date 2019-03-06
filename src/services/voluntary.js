@@ -4,6 +4,10 @@ export const registerVoluntary = async params => {
   return await promiseFactoryPost('register-voluntary', params);
 };
 
+export const updateVoluntary = async params => {
+  return await promiseFactoryPost('update-voluntary', params, 'patch');
+};
+
 export const getVoluntary = async () => {
   return await promiseFactory('data-de-entrega');
 };

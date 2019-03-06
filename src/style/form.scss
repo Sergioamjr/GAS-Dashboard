@@ -66,7 +66,7 @@ select {
   .label-icon {
     position: relative;
     &:before {
-      content: "";
+      content: '';
       width: 18px;
       height: 18px;
       border: 2px solid $dark;
@@ -78,7 +78,7 @@ select {
   }
   input:checked + .label-icon {
     &:after {
-      content: "";
+      content: '';
       width: 12px;
       height: 12px;
       background: $dark;
@@ -90,8 +90,11 @@ select {
       top: 5px;
     }
   }
-  &:last-child {
-    // margin-bottom: 0;
+  input:disabled + .label-icon {
+    &:before {
+      background: #e2e2e2;
+      border: 2px solid #e2e2e2;
+    }
   }
 }
 
@@ -107,7 +110,7 @@ select {
   .label-icon {
     position: relative;
     &:before {
-      content: "";
+      content: '';
       width: 18px;
       height: 18px;
       border: 2px solid $dark;
@@ -119,7 +122,7 @@ select {
   }
   input:checked + .label-icon {
     &:after {
-      content: "";
+      content: '';
       width: 12px;
       height: 12px;
       background: $dark;

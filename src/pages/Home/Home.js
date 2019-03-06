@@ -15,6 +15,7 @@ import moment from 'moment';
 import WithLoading from './../../utils/WithLoading';
 import {
   registerVoluntary,
+  updateVoluntary,
   isRegistered,
   deleteVoluntary,
   voluntaryHistory
@@ -40,8 +41,10 @@ const stateDefault = {
     _id: ''
   },
   details: {
+    isEditing: false,
     hasHistory: false,
     isFetching: true,
+    hasActionSchedule: false,
     senha: '',
     _id: '',
     dataProxima: '',
@@ -132,6 +135,7 @@ class Home extends React.Component {
         action_id,
         user_id
       });
+      const isEditing = _get(voluntary, '_id');
       this.setState(
         {
           action: {
@@ -139,7 +143,8 @@ class Home extends React.Component {
             ...voluntary
           },
           details: {
-            ...this.state.details
+            ...this.state.details,
+            isEditing: !!isEditing
           }
         },
         this.queryPartnersInAction
@@ -150,12 +155,13 @@ class Home extends React.Component {
   fetchNextDateAvaliable = async () => {
     try {
       const date = await getNextActionDate();
-
+      const hasActionSchedule = _get(date, 'dataProxima');
       this.setState(
         {
           details: {
             ...this.state.details,
             isFetching: false,
+            hasActionSchedule: !!hasActionSchedule,
             ...date
           }
         },
@@ -201,9 +207,13 @@ class Home extends React.Component {
       const first_time = _get(this.state, 'action.first_time');
       const withCar = _get(this.state, 'action.withCar');
       const carModel = _get(this.state, 'action.carModel');
+      const _id = _get(this.state, 'action._id');
 
-      const response = await registerVoluntary({
+      const fn = _id ? updateVoluntary : registerVoluntary;
+
+      const response = await fn({
         params: {
+          _id,
           first_time,
           carModel,
           withCar,
@@ -214,7 +224,8 @@ class Home extends React.Component {
         }
       });
       done();
-      this.props.dispatch(updateMessage('Cadastro feito com sucesso.'));
+      const message = _id ? 'Atualizado' : 'Cadastro feito';
+      this.props.dispatch(updateMessage(`${message} com sucesso.`));
       this.fetchAllData();
     } catch (error) {
       done();
@@ -236,10 +247,31 @@ class Home extends React.Component {
     } catch (error) {}
   };
 
+  isValidRegister = () => {
+    const { carModel, withCar } = _get(this.state, 'action', {});
+    return withCar ? carModel : true;
+  };
+
+  openEdition = () => {
+    this.setState(
+      {
+        details: {
+          ...this.state.details,
+          isEditing: !this.state.details.isEditing
+        }
+      },
+      () => {
+        const isCancelled = this.state.details.isEditing;
+        isCancelled && this.isAlreadyRegistered();
+      }
+    );
+  };
+
   render() {
     const dataProxima = _get(this.state, 'details.dataProxima');
     const parceiro_1 = _get(this.state, 'data.parceiro_1');
     const parceiro_2 = _get(this.state, 'data.parceiro_2');
+    const isValidRegister = this.isValidRegister();
     return (
       <PageWrapper
         title='Voluntariar-se'
@@ -253,94 +285,141 @@ class Home extends React.Component {
             </span>
           </h2>
         )}
-        {this.state.action._id ? (
+
+        {!this.state.details.hasActionSchedule && (
+          <p className='color-dark m-bottom-20 p-center'>
+            Ainda não temos uma entrega prevista.
+          </p>
+        )}
+
+        {this.state.action._id && (
           <div className='m-bottom-20 background-success color-white p-center p-10'>
             <marquee>Você já está cadastrado na próxima entrega.</marquee>
           </div>
-        ) : (
-          <p className='color-dark m-bottom-20'>
+        )}
+
+        {!this.state.action._id && this.state.details.hasActionSchedule && (
+          <p className='color-dark m-bottom-20 p-center'>
             Você ainda não está inscrito na próxima entrega, gostaria de
             participar?
           </p>
         )}
-        <div className='m-bottom-40'>
-          <FromGroup
-            title='Confirme seus dados pessoais'
-            formName='Dados do voluntário'
-          >
-            <ActionInfo
-              {...this.state.action}
-              hideFirstTime={this.state.details.hasHistory}
-              onChangeHandler={this.onChangeActionHandler}
-            />
-          </FromGroup>
-          <FromGroup
-            title='Confirme seus dados pessoais'
-            formName='Dados do voluntário'
-          >
-            <ProfileForm
-              {...this.state.data}
-              disabledAll
-              hideDetails
-              onChangeHandler={this.onChangeHandler}
-            />
-          </FromGroup>
 
-          {(parceiro_1 || parceiro_2) && (
-            <FromGroup title='Parceiros' formName='Parceiros cadastrados'>
-              <div className='p-15'>
-                {this.state.partners.length === 0 && (
-                  <p className='color-dark'>
-                    Seus familiares cadastrados ainda não se inscreveram para
-                    essa entrega.
-                  </p>
-                )}
+        {this.state.details.hasActionSchedule && (
+          <div className='m-bottom-40'>
+            <FromGroup
+              title='Confirme seus dados pessoais'
+              formName='Dados do voluntário'
+            >
+              <ActionInfo
+                disabled={this.state.details.isEditing}
+                {...this.state.action}
+                hideFirstTime={this.state.details.hasHistory}
+                onChangeHandler={this.onChangeActionHandler}
+              />
+            </FromGroup>
+            <FromGroup
+              title='Confirme seus dados pessoais'
+              formName='Dados do voluntário'
+            >
+              <ProfileForm
+                {...this.state.data}
+                disabledAll
+                hideDetails
+                onChangeHandler={this.onChangeHandler}
+              />
+            </FromGroup>
 
-                {this.state.partners.length === 1 && (
-                  <p className='color-dark'>
-                    Dos seus familiares cadastrados,{' '}
-                    <strong>{this.state.partners[0]}</strong> já se inscreveu
-                    nessa entrega e vocês devem ir juntos.
-                  </p>
-                )}
+            {(parceiro_1 || parceiro_2) && (
+              <FromGroup title='Parceiros' formName='Parceiros cadastrados'>
+                <div className='p-15'>
+                  {this.state.partners.length === 0 && (
+                    <p className='color-dark'>
+                      Seus familiares cadastrados ainda não se inscreveram para
+                      essa entrega.
+                    </p>
+                  )}
 
-                {this.state.partners.length > 1 && (
-                  <p className='color-dark'>
-                    Dos seus familiares cadastradosss,{' '}
-                    <strong>{this.state.partners[0]}</strong>e{' '}
-                    <strong>{this.state.partners[1]}</strong> já se inscreveram
-                    nessa entrega e vocês devem ir juntos.
-                  </p>
+                  {this.state.partners.length === 1 && (
+                    <p className='color-dark'>
+                      Dos seus familiares cadastrados,{' '}
+                      <strong>{this.state.partners[0]}</strong> já se inscreveu
+                      nessa entrega e vocês devem ir juntos.
+                    </p>
+                  )}
+
+                  {this.state.partners.length > 1 && (
+                    <p className='color-dark'>
+                      Dos seus familiares cadastradosss,{' '}
+                      <strong>{this.state.partners[0]}</strong>e{' '}
+                      <strong>{this.state.partners[1]}</strong> já se
+                      inscreveram nessa entrega e vocês devem ir juntos.
+                    </p>
+                  )}
+                </div>
+              </FromGroup>
+            )}
+
+            <div className='d-flex d-flex-space-between'>
+              <div>
+                {!this.state.action._id ? (
+                  <Button
+                    disabled={!isValidRegister}
+                    loading={this.props.onSubmitSubscribe.isLoading ? 1 : 0}
+                    onClick={this.props.onSubmitSubscribe.fn}
+                    type='primary'
+                  >
+                    Salvar Cadastro
+                  </Button>
+                ) : (
+                  <div>
+                    {this.state.details.isEditing ? (
+                      <div>
+                        <Button
+                          className='m-right-10'
+                          onClick={this.openEdition}
+                        >
+                          Editar Cadastro
+                        </Button>
+                        <Button
+                          loading={
+                            this.props.onDeleteSubscribe.isLoading ? 1 : 0
+                          }
+                          onClick={this.props.onDeleteSubscribe.fn}
+                          type='danger'
+                        >
+                          Excluir Cadastro
+                        </Button>
+                      </div>
+                    ) : (
+                      <div>
+                        <Button
+                          className='m-right-10'
+                          onClick={this.openEdition}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button
+                          disabled={!isValidRegister}
+                          loading={
+                            this.props.onDeleteSubscribe.isLoading ? 1 : 0
+                          }
+                          onClick={this.props.onSubmitSubscribe.fn}
+                          type='primary'
+                        >
+                          Atualizar Cadastro
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
-            </FromGroup>
-          )}
-
-          <div className='d-flex d-flex-space-between'>
-            <div>
-              {!this.state.action._id ? (
-                <Button
-                  loading={this.props.onSubmitSubscribe.isLoading ? 1 : 0}
-                  onClick={this.props.onSubmitSubscribe.fn}
-                  type='primary'
-                >
-                  Salvar Cadastro
-                </Button>
-              ) : (
-                <Button
-                  loading={this.props.onDeleteSubscribe.isLoading ? 1 : 0}
-                  onClick={this.props.onDeleteSubscribe.fn}
-                  type='danger'
-                >
-                  Excluir Cadastro
-                </Button>
-              )}
+              <NavLink to='/meu-perfil'>
+                <Button>Editar Perfil</Button>
+              </NavLink>
             </div>
-            <NavLink to='/meu-perfil'>
-              <Button>Editar Perfil</Button>
-            </NavLink>
           </div>
-        </div>
+        )}
       </PageWrapper>
     );
   }

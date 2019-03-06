@@ -66,7 +66,13 @@ class PartnesForm extends React.Component {
               <p className='label'>Pessoas encontradas:</p>
               <div className='grid'>
                 {results.map((result, index) => {
-                  const { nome, sobrenome, _id } = result;
+                  const {
+                    nome,
+                    sobrenome,
+                    _id,
+                    parceiro_1,
+                    parceiro_2
+                  } = result;
                   return (
                     <div key={index} className='sm-6-12 '>
                       <div className='d-flex d-flex-space-between d-flex-align-center p-5 background-lighter m-bottom-10'>
@@ -76,6 +82,7 @@ class PartnesForm extends React.Component {
                         <Button
                           onClick={e => addPartner(_id, e)}
                           small
+                          disabled={parceiro_1 && parceiro_2}
                           type='primary'
                         >
                           Adicionar
