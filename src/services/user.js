@@ -1,11 +1,11 @@
-import axios from "axios";
-import { BACKEND } from "../APP-CONFIG";
-import { getAuth } from "./localStorage";
+import axios from 'axios';
+import { BACKEND } from '../APP-CONFIG';
+import { getAuth } from './localStorage';
 
 export const Login = ({ email, password }) => {
   return new Promise((resolve, reject) => {
     if (!email || !password) {
-      return reject("Digite seu e-mail e senha.");
+      return reject('Digite seu e-mail e senha.');
     }
 
     return axios
@@ -24,24 +24,23 @@ export const CreateLoginWithFacebook = params => {
   return new Promise(async (resolve, reject) => {
     try {
       const user = await CreateUser(params);
-      console.log("user", user);
       return resolve(user);
     } catch (error) {
       const { errorMessage } = error;
-      if (errorMessage && errorMessage.includes("Já existe")) {
+      if (errorMessage && errorMessage.includes('Já existe')) {
         try {
           const loginResponse = await Login(params);
           return resolve(loginResponse);
         } catch (loginError) {
           return reject({
             errorMessage:
-              "Erro ao logar com o Facebook. Tente depois ou recupere sua senha."
+              'Erro ao logar com o Facebook. Tente depois ou recupere sua senha.'
           });
         }
       }
       return reject({
         errorMessage:
-          "Erro ao criar sua conta com o Facebook. Tente depois ou use um e-mail."
+          'Erro ao criar sua conta com o Facebook. Tente depois ou use um e-mail.'
       });
     }
   });
@@ -55,15 +54,15 @@ const formatCatch = error => {
   return error;
 };
 
-const mountHeader = (token, params, method = "GET") => {
+const mountHeader = (token, params, method = 'GET') => {
   return {
     method,
-    headers: { "x-auth": token },
+    headers: { 'x-auth': token },
     params
   };
 };
 
-const promiseFactory = async (endpoint, args = {}, method = "get") => {
+const promiseFactory = async (endpoint, args = {}, method = 'get') => {
   const { token } = await getAuth();
   const params = mountHeader(token, args, method.toUpperCase());
   return axios[method](`${BACKEND}/${endpoint}`, { ...params })
@@ -71,7 +70,7 @@ const promiseFactory = async (endpoint, args = {}, method = "get") => {
     .catch(error => formatCatch(error));
 };
 
-const promiseFactoryPost = async (endpoint, args = {}, method = "post") => {
+const promiseFactoryPost = async (endpoint, args = {}, method = 'post') => {
   const { token } = await getAuth();
   const params = mountHeader(token, args, method.toUpperCase());
   return axios[method](`${BACKEND}/${endpoint}`, args, { ...params })
@@ -80,31 +79,33 @@ const promiseFactoryPost = async (endpoint, args = {}, method = "post") => {
 };
 
 export const searchUser = async search => {
-  return await promiseFactory("search-user", { search });
+  return await promiseFactory('search-user', { search });
 };
 
 export const getPartners = async _id => {
-  return await promiseFactory("get-user-partners", { _id });
+  return await promiseFactory('get-user-partners', { _id });
 };
 
 export const getUserInfo = async _id => {
-  return await promiseFactory("get-by-id", { _id });
+  return await promiseFactory('get-by-id', { _id });
 };
 
+// profile-image-by-id
+
 export const addUserAsPartner = async params => {
-  return await promiseFactoryPost("add-partner", params);
+  return await promiseFactoryPost('add-partner', params);
 };
 
 export const removeUserAsPartner = async params => {
-  return await promiseFactoryPost("remove-partner", params);
+  return await promiseFactoryPost('remove-partner', params);
 };
 
 export const hasValidToken = async params => {
-  return await promiseFactoryPost("token", params);
+  return await promiseFactoryPost('token', params);
 };
 
 export const updateUser = async params => {
-  return await promiseFactoryPost("atualizar-usuario", params, "put");
+  return await promiseFactoryPost('atualizar-usuario', params, 'put');
 };
 
 export const CreateUser = ({
@@ -116,11 +117,11 @@ export const CreateUser = ({
 }) => {
   return new Promise((resolve, reject) => {
     if (!nome || !email || !password || !repassword || !sobrenome) {
-      return reject("Preencha todos os campos.");
+      return reject('Preencha todos os campos.');
     }
 
     if (password !== repassword) {
-      return reject("Senhas não conferem.");
+      return reject('Senhas não conferem.');
     }
 
     return axios
@@ -138,7 +139,7 @@ export const CreateUser = ({
 export const RequestResetPassword = ({ email }) => {
   return new Promise((resolve, reject) => {
     if (!email) {
-      return reject("Preencha seu e-email.");
+      return reject('Preencha seu e-email.');
     }
 
     return axios
@@ -154,9 +155,9 @@ export const RequestResetPassword = ({ email }) => {
 export const ResetPassword = ({ password, repassword, token }) => {
   return new Promise((resolve, reject) => {
     if (!password || !repassword) {
-      return reject("Digite e confirme sua nova senha.");
+      return reject('Digite e confirme sua nova senha.');
     } else if (password !== repassword) {
-      return reject("Senhas não conferem.");
+      return reject('Senhas não conferem.');
     }
 
     return axios
@@ -172,7 +173,7 @@ export const ResetPassword = ({ password, repassword, token }) => {
 export const ValidateToken = ({ token }) => {
   return new Promise((resolve, reject) => {
     if (!token) {
-      return reject("Token não fornecido.");
+      return reject('Token não fornecido.');
     }
 
     return axios
@@ -183,4 +184,26 @@ export const ValidateToken = ({ token }) => {
         return reject(data || response);
       });
   });
+};
+
+export const uploadProfileImage = (image, user_id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const formData = new FormData();
+      formData.append('user_id', user_id);
+      formData.append('image', image);
+      const response = await fetch(`${BACKEND}/upload-profile-image`, {
+        method: 'POST',
+        body: formData
+      });
+      const toJson = await response.json();
+      return resolve(toJson);
+    } catch (error) {
+      return reject(error);
+    }
+  });
+};
+
+export const getProfileImage = async user_id => {
+  return await promiseFactory('profile-image-by-id', { user_id });
 };

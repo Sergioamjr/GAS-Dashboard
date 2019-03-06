@@ -11,7 +11,9 @@ import {
   getPartners,
   removeUserAsPartner,
   getUserInfo,
-  updateUser
+  updateUser,
+  uploadProfileImage,
+  getProfileImage
 } from '../../services/user';
 import _get from 'lodash/get';
 import { getAuth } from '../../services/localStorage';
@@ -20,6 +22,7 @@ import {
   updateErrorMessage
 } from '../../redux/store/Feedback/feedback';
 import { getRotas } from '../../services/data-de-entrega';
+import btoa from 'btoa';
 
 const partnersDefault = {
   isQuerying: false,
@@ -31,6 +34,8 @@ const partnersDefault = {
 };
 
 const stateDefault = {
+  image: null,
+  url: '',
   data: {
     queryUser: false,
     _id: '',
@@ -71,14 +76,17 @@ class Profile extends React.Component {
           const { user } = await getUserInfo(queryID);
 
           const { rotas } = await getRotas();
-          this.setState({
-            rotas,
-            data: {
-              ...this.state.data,
-              ...user,
-              queryUser: false
-            }
-          });
+          this.setState(
+            {
+              rotas,
+              data: {
+                ...this.state.data,
+                ...user,
+                queryUser: false
+              }
+            },
+            this.fetchProfileImage
+          );
         } catch (error) {}
       }
     );
@@ -250,12 +258,54 @@ class Profile extends React.Component {
     this.props.history.goBack();
   };
 
+  onChangeImageHandler = event => {
+    let file = (event.target.files && event.target.files[0]) || null;
+    this.setState({
+      image: file
+    });
+  };
+
+  onUploadProfileImage = async () => {
+    try {
+      const userID = _get(this.state, 'data._id');
+      const { image } = this.state;
+      await uploadProfileImage(image, userID);
+    } catch (error) {}
+  };
+
+  fetchProfileImage = async () => {
+    try {
+      const userID = _get(this.state, 'data._id');
+      const response = await getProfileImage(userID);
+      const base64Flag = 'data:image/jpeg;charset=utf-8;base64,';
+      const url = btoa(response);
+      this.setState({
+        url: base64Flag + url
+      });
+    } catch (error) {}
+  };
+
   render() {
     const partnersToShow = this.filterResultsToAdd();
+    const { url } = this.state;
     const urlID = _get(this.props, 'match.params.id');
     return (
       <PageWrapper title='Dados Pessoais'>
         <div className='m-bottom-40'>
+          <FromGroup title='Foto de Perfil'>
+            <div className='p-15'>
+              {url && <img src={url} />}
+              <p>Selecione a foto do seu perfil:</p>
+              <input onChange={this.onChangeImageHandler} type='file' />
+              <Button
+                disabled={!this.state.image}
+                onClick={this.onUploadProfileImage}
+                type='primary'
+              >
+                Salvar Foto
+              </Button>
+            </div>
+          </FromGroup>
           <FromGroup title='Dados pessoais' formName='Dados do voluntário'>
             <ProfileForm
               {...this.state.data}
