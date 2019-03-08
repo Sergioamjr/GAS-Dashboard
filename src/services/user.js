@@ -191,7 +191,8 @@ export const uploadProfileImage = (image, user_id) => {
     try {
       const formData = new FormData();
       formData.append('user_id', user_id);
-      formData.append('image', image);
+      formData.append('image', image, user_id);
+
       const response = await fetch(`${BACKEND}/upload-profile-image`, {
         method: 'POST',
         body: formData

@@ -107,3 +107,14 @@
     transform: rotate(360deg);
   }
 }
+
+.profile-image-background {
+  background-size: cover;
+  background-position: center;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  img {
+    display: none;
+  }
+}

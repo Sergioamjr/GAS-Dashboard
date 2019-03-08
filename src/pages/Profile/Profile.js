@@ -270,17 +270,17 @@ class Profile extends React.Component {
       const userID = _get(this.state, 'data._id');
       const { image } = this.state;
       await uploadProfileImage(image, userID);
+      this.fetchProfileImage();
     } catch (error) {}
   };
 
   fetchProfileImage = async () => {
     try {
       const userID = _get(this.state, 'data._id');
-      const response = await getProfileImage(userID);
-      const base64Flag = 'data:image/jpeg;charset=utf-8;base64,';
-      const url = btoa(response);
+      const { response } = await getProfileImage(userID);
+      const base64Flag = 'data:image/jpeg;base64,';
       this.setState({
-        url: base64Flag + url
+        url: base64Flag + response
       });
     } catch (error) {}
   };
@@ -294,7 +294,14 @@ class Profile extends React.Component {
         <div className='m-bottom-40'>
           <FromGroup title='Foto de Perfil'>
             <div className='p-15'>
-              {url && <img src={url} />}
+              {url && (
+                <div
+                  className='profile-image-background'
+                  style={{ backgroundImage: `url(${url})` }}
+                >
+                  <img src={url} />
+                </div>
+              )}
               <p>Selecione a foto do seu perfil:</p>
               <input onChange={this.onChangeImageHandler} type='file' />
               <Button
