@@ -30,7 +30,9 @@ class Header extends React.Component<Props, State> {
 
     return (
       <header className='header d-flex d-flex-align-center d-flex-space-between'>
-        <h1 className='color-white fs-5'>GAS - Grupo de Atitude Social</h1>
+        <h1 className='color-white background-logo background-logo-small'>
+          GAS - Grupo de Atitude Social
+        </h1>
         <div className='d-flex d-flex-space-between d-flex-align-center'>
           {/* <p className=" color-white">Olá, {username}</p> */}
           <Button onClick={this.onLogoutHandler} className='m-left-10' small>

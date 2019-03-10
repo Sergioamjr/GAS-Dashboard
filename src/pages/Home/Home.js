@@ -292,19 +292,17 @@ class Home extends React.Component {
           </p>
         )}
 
-        {this.state.action._id && (
+        {this.state.action._id && this.state.details.isOpen && (
           <div className='m-bottom-20 background-success color-white p-center p-10'>
             <marquee>Você já está cadastrado na próxima entrega.</marquee>
           </div>
         )}
 
-        {!this.state.action._id &&
-          this.state.details.hasActionSchedule &&
-          !this.state.details.isOpen && (
-            <p className='color-dark m-bottom-20 p-center'>
-              A chamada ainda não está aberta p/ próxima entrega.
-            </p>
-          )}
+        {!this.state.details.isOpen && (
+          <p className='color-dark m-bottom-20 p-center'>
+            A chamada ainda não está aberta p/ próxima entrega.
+          </p>
+        )}
 
         {!this.state.action._id &&
           this.state.details.hasActionSchedule &&
