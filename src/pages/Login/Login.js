@@ -10,7 +10,8 @@ import type { BrowserHistory } from 'history';
 import _get from 'lodash/get';
 import { UpdateUser } from '../../redux/store/User/User';
 import Loading from '../../components/Loading/Loading';
-import { hasValidToken } from '../../services/user';
+import { hasValidToken, CreateLoginWithFacebook } from '../../services/user';
+import FacebookLogin from 'react-facebook-login';
 
 type State = {
   data: {
@@ -109,6 +110,35 @@ class Login extends React.Component<Props, State> {
     return !email || !password;
   };
 
+  loginWithFacebook = (response: any) => {
+    this.setState(
+      {
+        isSubmiting: true
+      },
+      async () => {
+        try {
+          const { name, email, userID } = response;
+
+          const user = await CreateLoginWithFacebook({
+            nome: name,
+            email,
+            password: userID,
+            repassword: userID,
+            sobrenome: ''
+          });
+          this.props.dispatch(UpdateUser(user));
+          await setAuth(user);
+          this.redirectToHome();
+        } catch (error) {
+          this.setState({
+            isSubmiting: false,
+            hasError: true
+          });
+        }
+      }
+    );
+  };
+
   render() {
     const hasValidForm = this.validateLoginForm();
     const { hasAuth } = this.state;
@@ -123,39 +153,50 @@ class Login extends React.Component<Props, State> {
             {hasAuth ? (
               <Loading />
             ) : (
-              <FromGroup title='Faça login' hideIcon>
-                <div className='p-15 background-white'>
-                  <Input
-                    value={this.state.data.email}
-                    label='Usuário'
-                    name='email'
-                    onChange={this.onChangeHandler}
-                    placeholder='Digite seu usuário'
-                  />
-                  <Input
-                    value={this.state.data.password}
-                    label='Senha'
-                    type='password'
-                    name='password'
-                    onChange={this.onChangeHandler}
-                    placeholder='Digite sua senha'
-                  />
-                  {this.state.hasError && (
-                    <p className='color-danger m-bottom-20 p-center'>
-                      Usuário ou senha incorretas.
-                    </p>
-                  )}
+              <div className='w-100'>
+                <FromGroup title='Faça login' hideIcon>
+                  <div className='p-15 background-white'>
+                    <Input
+                      value={this.state.data.email}
+                      label='Usuário'
+                      name='email'
+                      onChange={this.onChangeHandler}
+                      placeholder='Digite seu usuário'
+                    />
+                    <Input
+                      value={this.state.data.password}
+                      label='Senha'
+                      type='password'
+                      name='password'
+                      onChange={this.onChangeHandler}
+                      placeholder='Digite sua senha'
+                    />
+                    {this.state.hasError && (
+                      <p className='color-danger m-bottom-20 p-center'>
+                        Usuário ou senha incorretas.
+                      </p>
+                    )}
 
-                  <Button
-                    loading={this.state.isSubmiting ? 1 : 0}
-                    disabled={hasValidForm}
-                    type='primary'
-                    onClick={this.onSubmitHandler}
-                  >
-                    Entrar
-                  </Button>
+                    <Button
+                      loading={this.state.isSubmiting ? 1 : 0}
+                      disabled={hasValidForm}
+                      type='primary'
+                      onClick={this.onSubmitHandler}
+                    >
+                      Entrar
+                    </Button>
+                  </div>
+                </FromGroup>
+                <div className='p-center'>
+                  <FacebookLogin
+                    appId='120022385559001'
+                    fields='name,email'
+                    textButton='Entrar com Facebook'
+                    disableMobileRedirect={true}
+                    callback={this.loginWithFacebook}
+                  />
                 </div>
-              </FromGroup>
+              </div>
             )}
           </div>
         </div>
