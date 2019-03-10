@@ -28,6 +28,10 @@ export const createRota = async params => {
   return await promiseFactoryPost('create-rota', params);
 };
 
+export const updateEntrega = async params => {
+  return await promiseFactoryPost('atualizar-entrega', params, 'put');
+};
+
 export const getUsers = async () => {
   return await promiseFactory('get-users');
 };

@@ -9,8 +9,11 @@ import DatePicker from '../../components/DatePicker/DatePicker';
 import {
   addNewDate,
   getDates,
+  updateEntrega,
   deleteDate
 } from '../../services/data-de-entrega';
+import { connect } from 'react-redux';
+import { updateMessage } from '../../redux/store/Feedback/feedback';
 
 const defaultData = {
   data: new Date(),
@@ -18,6 +21,7 @@ const defaultData = {
 };
 
 const stateDefault = {
+  openEdit: null,
   results: [],
   isFetching: false,
   isLoading: false,
@@ -36,7 +40,8 @@ class ListActions extends React.Component {
   fetchActionsDays = () => {
     this.setState(
       {
-        isFetching: true
+        isFetching: true,
+        openEdit: null
       },
       async () => {
         try {
@@ -59,11 +64,37 @@ class ListActions extends React.Component {
     });
   };
 
+  onChangeEditHandler = (event, key) => {
+    const {
+      target: { value, name }
+    } = event;
+    console.log(name, value);
+    let { results } = this.state;
+    let resultsToEdit = results[key];
+    resultsToEdit = {
+      ...resultsToEdit,
+      [name]: value
+    };
+    results[key] = resultsToEdit;
+    this.setState({
+      data: {
+        ...this.state.data,
+        results
+      }
+    });
+  };
+
   onDeleteHandler = async _id => {
     try {
       await deleteDate({ _id });
       this.fetchActionsDays();
     } catch (error) {}
+  };
+
+  openEditHandler = openEdit => {
+    this.setState({
+      openEdit
+    });
   };
 
   onSubmitHandler = e => {
@@ -87,6 +118,17 @@ class ListActions extends React.Component {
         }
       }
     );
+  };
+
+  onUpdateHandler = async key => {
+    try {
+      const results = this.state.results[key];
+      await updateEntrega({
+        params: { ...results, isOpen: results.isOpen === 'true' }
+      });
+      this.props.dispatch(updateMessage('Entrega atualizada com sucesso.'));
+      this.fetchActionsDays();
+    } catch (error) {}
   };
 
   render() {
@@ -155,34 +197,75 @@ class ListActions extends React.Component {
                 <thead>
                   <tr>
                     <th className='fs-7' />
+                    <th className='fs-7'>Está aberta</th>
                     <th className='fs-7'>Senha</th>
                     <th className='fs-7'>Data</th>
                   </tr>
                 </thead>
                 <tbody>
                   {results.map((result, index) => {
-                    const { _id, senha, data } = result;
+                    const { _id, senha, data, isOpen } = result;
                     return (
                       <tr key={_id}>
                         <td className='fs-7'>
-                          {false && (
-                            <Button icon type='primary'>
-                              Salvar
-                            </Button>
+                          {this.state.openEdit === index ? (
+                            <div>
+                              <Button
+                                className='m-right-10'
+                                icon
+                                onClick={() => this.onUpdateHandler(index)}
+                                type='primary'
+                              >
+                                Salvar
+                              </Button>
+                              <Button
+                                onClick={() => this.openEditHandler(null)}
+                                className='m-right-10'
+                                icon
+                              >
+                                Cancelar
+                              </Button>
+                            </div>
+                          ) : (
+                            <div>
+                              <Button
+                                onClick={() => this.openEditHandler(index)}
+                                className='m-right-10'
+                                icon
+                              >
+                                Editar
+                              </Button>
+                              <Button
+                                onClick={() => this.onDeleteHandler(_id)}
+                                className='m-right-10'
+                                icon
+                                type='danger'
+                              >
+                                Excluir
+                              </Button>
+                            </div>
                           )}
-                          <Button className='m-left-10' icon>
-                            Editar
-                          </Button>
-                          <Button
-                            onClick={() => this.onDeleteHandler(_id)}
-                            className='m-left-10'
-                            icon
-                            type='danger'
-                          >
-                            Excluir
-                          </Button>
                         </td>
-                        <td className='fs-7'>{senha}</td>
+                        <td className='fs-7'>
+                          <select
+                            value={isOpen}
+                            name='isOpen'
+                            onChange={e => this.onChangeEditHandler(e, index)}
+                            disabled={this.state.openEdit !== index}
+                          >
+                            <option value={false}>Não</option>
+                            <option value={true}>Sim</option>
+                          </select>
+                        </td>
+                        <td className='fs-7'>
+                          <input
+                            disabled={this.state.openEdit !== index}
+                            onChange={e => this.onChangeEditHandler(e, index)}
+                            name='senha'
+                            type='text'
+                            value={senha}
+                          />
+                        </td>
                         <td className='fs-7'>
                           {moment(data).format('DD/MM/YYYY')}
                         </td>
@@ -199,4 +282,4 @@ class ListActions extends React.Component {
   }
 }
 
-export default ListActions;
+export default connect()(ListActions);

@@ -298,14 +298,24 @@ class Home extends React.Component {
           </div>
         )}
 
-        {!this.state.action._id && this.state.details.hasActionSchedule && (
-          <p className='color-dark m-bottom-20 p-center'>
-            Você ainda não está inscrito na próxima entrega, gostaria de
-            participar?
-          </p>
-        )}
+        {!this.state.action._id &&
+          this.state.details.hasActionSchedule &&
+          !this.state.details.isOpen && (
+            <p className='color-dark m-bottom-20 p-center'>
+              A chamada ainda não está aberta p/ próxima entrega.
+            </p>
+          )}
 
-        {this.state.details.hasActionSchedule && (
+        {!this.state.action._id &&
+          this.state.details.hasActionSchedule &&
+          this.state.details.isOpen && (
+            <p className='color-dark m-bottom-20 p-center'>
+              Você ainda não está inscrito na próxima entrega, gostaria de
+              participar?
+            </p>
+          )}
+
+        {this.state.details.hasActionSchedule && this.state.details.isOpen && (
           <div className='m-bottom-40'>
             <FromGroup
               title='Confirme seus dados pessoais'
