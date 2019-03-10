@@ -12,6 +12,7 @@ class ProfileForm extends React.Component {
               label='Nome:'
               name='nome'
               disabled={!this.props.isDisabled}
+              hasError={!this.props.nome}
               onChange={this.props.onChangeHandler}
               value={this.props.nome}
               placeholder='Digite seu nome'
@@ -22,6 +23,7 @@ class ProfileForm extends React.Component {
               disabled={this.props.disabledAll}
               label='Sobrenome:'
               name='sobrenome'
+              hasError={!this.props.sobrenome}
               disabled={!this.props.isDisabled}
               onChange={this.props.onChangeHandler}
               value={this.props.sobrenome}
@@ -35,6 +37,7 @@ class ProfileForm extends React.Component {
               label='Cidade:'
               name='cidade'
               disabled={!this.props.isDisabled}
+              hasError={!this.props.cidade}
               onChange={this.props.onChangeHandler}
               value={this.props.cidade}
               placeholder='Digite sua cidade'
@@ -57,6 +60,8 @@ class ProfileForm extends React.Component {
               label='Nascimento:'
               name='nascimento'
               disabled={!this.props.isDisabled}
+              errorMessage='Digite uma data válida. (ex. 10/01/1980)'
+              hasError={this.props.nascimento.replace(/\D/g, '').length !== 8}
               onChange={this.props.onChangeHandler}
               value={this.props.nascimento}
               placeholder='Digite seu nascimento'
@@ -69,6 +74,7 @@ class ProfileForm extends React.Component {
               name='numeroDeEmergencia'
               disabled={!this.props.isDisabled}
               onChange={this.props.onChangeHandler}
+              hasError={!this.props.numeroDeEmergencia}
               value={this.props.numeroDeEmergencia}
               placeholder='Digite um telefone de emergência'
             />
@@ -80,6 +86,7 @@ class ProfileForm extends React.Component {
               name='nomeDeEmergencia'
               disabled={!this.props.isDisabled}
               onChange={this.props.onChangeHandler}
+              hasError={!this.props.nomeDeEmergencia}
               value={this.props.nomeDeEmergencia}
               placeholder='Digite o nome do contato de emergência'
             />

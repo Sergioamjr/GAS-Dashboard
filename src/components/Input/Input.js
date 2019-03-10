@@ -1,5 +1,5 @@
 //@flow
-import React from "react";
+import React from 'react';
 
 type Props = {
   label?: string,
@@ -7,7 +7,8 @@ type Props = {
   textarea?: boolean,
   errorMessage?: string,
   hasError?: boolean,
-  prefix?: string
+  prefix?: string,
+  placeholder?: string
 };
 
 const Input = (props: Props) => {
@@ -20,10 +21,11 @@ const Input = (props: Props) => {
     prefix,
     ...otherProps
   } = props;
+  const { placeholder } = props;
   return (
-    <div className="m-bottom-30 input-wrapper">
+    <div className='m-bottom-30 input-wrapper'>
       {label && (
-        <label htmlFor={name} className="label d-block">
+        <label htmlFor={name} className='label d-block'>
           {label}
         </label>
       )}
@@ -33,9 +35,11 @@ const Input = (props: Props) => {
         <input {...otherProps} name={name} id={name} />
       )}
       {hasError && (
-        <p className="color-danger fs-7 m-top-5 input-wrapper-error">{errorMessage}</p>
+        <p className='color-danger fs-7 m-top-5 input-wrapper-error'>
+          {errorMessage || placeholder}
+        </p>
       )}
-      {prefix && <span className="float-prefix">{prefix}</span>}
+      {prefix && <span className='float-prefix'>{prefix}</span>}
     </div>
   );
 };
