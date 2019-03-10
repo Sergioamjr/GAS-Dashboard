@@ -23,6 +23,7 @@ import {
 } from '../../redux/store/Feedback/feedback';
 import { getRotas } from '../../services/data-de-entrega';
 import btoa from 'btoa';
+import { connect } from 'react-redux';
 
 const partnersDefault = {
   isQuerying: false,
@@ -259,10 +260,29 @@ class Profile extends React.Component {
   };
 
   onChangeImageHandler = event => {
-    let file = (event.target.files && event.target.files[0]) || null;
-    this.setState({
-      image: file
+    let file = (event.target.files && event.target.files[0]) || false;
+    if (!file) {
+      return false;
+    }
+    const allowedExtenstions = ['png', 'jpg', 'jpeg'];
+    let isAllowed = false;
+    allowedExtenstions.forEach(ext => {
+      if (file.type.includes(ext)) {
+        isAllowed = true;
+      }
     });
+    if (!isAllowed) {
+      this.props.dispatch(
+        updateErrorMessage('Selecione um arquivo de imagem.')
+      );
+      return false;
+    }
+    this.setState(
+      {
+        image: file
+      },
+      this.onUploadProfileImage
+    );
   };
 
   onUploadProfileImage = async () => {
@@ -270,6 +290,7 @@ class Profile extends React.Component {
       const userID = _get(this.state, 'data._id');
       const { image } = this.state;
       await uploadProfileImage(image, userID);
+      this.props.dispatch(updateMessage('Foto salva com sucesso.'));
       this.fetchProfileImage();
     } catch (error) {}
   };
@@ -279,8 +300,10 @@ class Profile extends React.Component {
       const userID = _get(this.state, 'data._id');
       const { response } = await getProfileImage(userID);
       const base64Flag = 'data:image/jpeg;base64,';
+      const withNoImage =
+        'https://d2x5ku95bkycr3.cloudfront.net/App_Themes/Common/images/profile/0_200.png';
       this.setState({
-        url: base64Flag + response
+        url: response ? base64Flag + response : withNoImage
       });
     } catch (error) {}
   };
@@ -292,27 +315,41 @@ class Profile extends React.Component {
     return (
       <PageWrapper title='Dados Pessoais'>
         <div className='m-bottom-40'>
-          <FromGroup title='Foto de Perfil'>
-            <div className='p-15'>
-              {url && (
-                <div
-                  className='profile-image-background'
-                  style={{ backgroundImage: `url(${url})` }}
-                >
-                  <img src={url} />
+          <div className='grid'>
+            <div className='sm-4-12'>
+              <FromGroup title='Foto de Perfil'>
+                <div className='p-15 p-center'>
+                  <p className='label d-block'>
+                    Selecione a foto do seu perfil:
+                  </p>
+                  {url && (
+                    <div className='m-bottom-20'>
+                      <div
+                        className='profile-image-background'
+                        style={{ backgroundImage: `url(${url})` }}
+                      >
+                        <img src={url} />
+                      </div>
+                    </div>
+                  )}
+                  <div className='m-bottom-10'>
+                    <label
+                      htmlFor='profile-image'
+                      className='btn-primary btn d-block '
+                    >
+                      Escolha uma foto de perfil
+                      <input
+                        id='profile-image'
+                        className='d-none'
+                        onChange={this.onChangeImageHandler}
+                        type='file'
+                      />
+                    </label>
+                  </div>
                 </div>
-              )}
-              <p>Selecione a foto do seu perfil:</p>
-              <input onChange={this.onChangeImageHandler} type='file' />
-              <Button
-                disabled={!this.state.image}
-                onClick={this.onUploadProfileImage}
-                type='primary'
-              >
-                Salvar Foto
-              </Button>
+              </FromGroup>
             </div>
-          </FromGroup>
+          </div>
           <FromGroup title='Dados pessoais' formName='Dados do voluntário'>
             <ProfileForm
               {...this.state.data}
@@ -361,4 +398,4 @@ class Profile extends React.Component {
   }
 }
 
-export default Profile;
+export default connect()(Profile);
