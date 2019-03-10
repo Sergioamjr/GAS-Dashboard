@@ -1,9 +1,7 @@
 import React from 'react';
 import FromGroup from '../../components/FormGroup/FormGroup';
-import Input from '../../components/Input/Input';
 import PageWrapper from '../../components/PageWrapper/PageWrapper';
 import Button from '../../components/Button/Button';
-import Checkbox from '../../components/Checkbox/Checkbox';
 import { NavLink } from 'react-router-dom';
 import ProfileForm from '../../components/ProfileForm';
 import ActionInfo from '../../components/ActionInfo/ActionInfo';
@@ -131,7 +129,7 @@ class Home extends React.Component {
     const action_id = _get(this.state, 'details._id');
     const user_id = _get(this.state, 'data._id');
     try {
-      const { response, voluntary } = await isRegistered({
+      const { voluntary } = await isRegistered({
         action_id,
         user_id
       });
@@ -211,7 +209,7 @@ class Home extends React.Component {
 
       const fn = _id ? updateVoluntary : registerVoluntary;
 
-      const response = await fn({
+      await fn({
         params: {
           _id,
           first_time,

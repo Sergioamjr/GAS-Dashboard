@@ -3,9 +3,6 @@ import FromGroup from '../../components/FormGroup/FormGroup';
 import Input from '../../components/Input/Input';
 import PageWrapper from '../../components/PageWrapper/PageWrapper';
 import Button from '../../components/Button/Button';
-import moment from 'moment';
-import { NavLink } from 'react-router-dom';
-import DatePicker from '../../components/DatePicker/DatePicker';
 import {
   getRotas,
   createRota,

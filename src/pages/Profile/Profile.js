@@ -1,6 +1,5 @@
 import React from 'react';
 import FromGroup from '../../components/FormGroup/FormGroup';
-import Input from '../../components/Input/Input';
 import PageWrapper from '../../components/PageWrapper/PageWrapper';
 import Button from '../../components/Button/Button';
 import ProfileForm from '../../components/ProfileForm';
@@ -22,7 +21,6 @@ import {
   updateErrorMessage
 } from '../../redux/store/Feedback/feedback';
 import { getRotas } from '../../services/data-de-entrega';
-import btoa from 'btoa';
 import { connect } from 'react-redux';
 
 const partnersDefault = {
@@ -328,7 +326,7 @@ class Profile extends React.Component {
                         className='profile-image-background'
                         style={{ backgroundImage: `url(${url})` }}
                       >
-                        <img src={url} />
+                        <img src={url} alt='Foto do Usuário' />
                       </div>
                     </div>
                   )}

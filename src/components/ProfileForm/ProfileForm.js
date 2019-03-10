@@ -8,10 +8,9 @@ class ProfileForm extends React.Component {
         <div className='grid'>
           <div className='sm-6-12'>
             <Input
-              disabled={this.props.disabledAll}
+              disabled={this.props.disabledAll || !this.props.isDisabled}
               label='Nome:'
               name='nome'
-              disabled={!this.props.isDisabled}
               hasError={!this.props.nome}
               onChange={this.props.onChangeHandler}
               value={this.props.nome}
@@ -20,11 +19,10 @@ class ProfileForm extends React.Component {
           </div>
           <div className='sm-6-12'>
             <Input
-              disabled={this.props.disabledAll}
+              disabled={this.props.disabledAll || !this.props.isDisabled}
               label='Sobrenome:'
               name='sobrenome'
               hasError={!this.props.sobrenome}
-              disabled={!this.props.isDisabled}
               onChange={this.props.onChangeHandler}
               value={this.props.sobrenome}
               placeholder='Digite seu sobrenome'
@@ -33,10 +31,9 @@ class ProfileForm extends React.Component {
 
           <div className='sm-6-12'>
             <Input
-              disabled={this.props.disabledAll}
+              disabled={this.props.disabledAll || !this.props.isDisabled}
               label='Cidade:'
               name='cidade'
-              disabled={!this.props.isDisabled}
               hasError={!this.props.cidade}
               onChange={this.props.onChangeHandler}
               value={this.props.cidade}
@@ -45,10 +42,9 @@ class ProfileForm extends React.Component {
           </div>
           <div className='sm-3-12'>
             <Input
-              disabled={this.props.disabledAll}
+              disabled={this.props.disabledAll || !this.props.isDisabled}
               label='Telefone:'
               name='telefone'
-              disabled={!this.props.isDisabled}
               onChange={this.props.onChangeHandler}
               value={this.props.telefone}
               placeholder='Digite seu telefone'
@@ -56,10 +52,9 @@ class ProfileForm extends React.Component {
           </div>
           <div className='sm-3-12'>
             <Input
-              disabled={this.props.disabledAll}
+              disabled={this.props.disabledAll || !this.props.isDisabled}
               label='Nascimento:'
               name='nascimento'
-              disabled={!this.props.isDisabled}
               errorMessage='Digite uma data válida. (ex. 10/01/1980)'
               hasError={this.props.nascimento.replace(/\D/g, '').length !== 8}
               onChange={this.props.onChangeHandler}
@@ -69,10 +64,9 @@ class ProfileForm extends React.Component {
           </div>
           <div className='sm-6-12'>
             <Input
-              disabled={this.props.disabledAll}
+              disabled={this.props.disabledAll || !this.props.isDisabled}
               label='Telefone de Emergência:'
               name='numeroDeEmergencia'
-              disabled={!this.props.isDisabled}
               onChange={this.props.onChangeHandler}
               hasError={!this.props.numeroDeEmergencia}
               value={this.props.numeroDeEmergencia}
@@ -81,10 +75,9 @@ class ProfileForm extends React.Component {
           </div>
           <div className='sm-6-12'>
             <Input
-              disabled={this.props.disabledAll}
+              disabled={this.props.disabledAll || !this.props.isDisabled}
               label='Nome do contato de emergência:'
               name='nomeDeEmergencia'
-              disabled={!this.props.isDisabled}
               onChange={this.props.onChangeHandler}
               hasError={!this.props.nomeDeEmergencia}
               value={this.props.nomeDeEmergencia}
@@ -99,7 +92,7 @@ class ProfileForm extends React.Component {
                   value={this.props.lider}
                   onChange={this.props.onChangeHandler}
                   name='lider'
-                  disabled={!this.props.isDisabled}
+                  disabled={this.props.disabledAll || !this.props.isDisabled}
                 >
                   <option value={false}>Não</option>
                   <option value={true}>Sim</option>
@@ -117,7 +110,7 @@ class ProfileForm extends React.Component {
                     value={this.props.rotaDefault}
                     onChange={this.props.onChangeHandler}
                     name='rotaDefault'
-                    disabled={!this.props.isDisabled}
+                    disabled={this.props.disabledAll || !this.props.isDisabled}
                   >
                     <option />
                     {this.props.rotas.map(({ rota, _id }) => {
