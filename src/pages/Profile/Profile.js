@@ -22,6 +22,7 @@ import {
 } from '../../redux/store/Feedback/feedback';
 import { getRotas } from '../../services/data-de-entrega';
 import { connect } from 'react-redux';
+import Loading from '../../components/Loading/Loading';
 
 const partnersDefault = {
   isQuerying: false,
@@ -34,6 +35,7 @@ const partnersDefault = {
 
 const stateDefault = {
   image: null,
+  fetchingImage: false,
   url: '',
   data: {
     queryUser: false,
@@ -77,6 +79,7 @@ class Profile extends React.Component {
           const { rotas } = await getRotas();
           this.setState(
             {
+              fetchingImage: true,
               rotas,
               data: {
                 ...this.state.data,
@@ -277,7 +280,8 @@ class Profile extends React.Component {
     }
     this.setState(
       {
-        image: file
+        image: file,
+        fetchingImage: true
       },
       this.onUploadProfileImage
     );
@@ -301,6 +305,7 @@ class Profile extends React.Component {
       const withNoImage =
         'https://d2x5ku95bkycr3.cloudfront.net/App_Themes/Common/images/profile/0_200.png';
       this.setState({
+        fetchingImage: false,
         url: response ? base64Flag + response : withNoImage
       });
     } catch (error) {}
@@ -333,9 +338,14 @@ class Profile extends React.Component {
                   <div className='m-bottom-10'>
                     <label
                       htmlFor='profile-image'
-                      className='btn-primary btn d-block '
+                      className={`btn-primary btn d-block ${
+                        this.state.fetchingImage ? 'disabled-link' : ''
+                      } `}
                     >
                       Escolha uma foto de perfil
+                      {this.state.fetchingImage && (
+                        <i className='m-left-10 fas fa-sync rotate' />
+                      )}
                       <input
                         id='profile-image'
                         className='d-none'
