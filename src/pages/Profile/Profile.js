@@ -22,7 +22,6 @@ import {
 } from '../../redux/store/Feedback/feedback';
 import { getRotas } from '../../services/data-de-entrega';
 import { connect } from 'react-redux';
-import Loading from '../../components/Loading/Loading';
 
 const partnersDefault = {
   isQuerying: false,
