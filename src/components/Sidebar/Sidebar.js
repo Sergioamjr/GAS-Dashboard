@@ -71,6 +71,7 @@ class Sidebar extends React.Component {
                   </li>
                 );
               }
+              return null;
             })}
           </ul>
         </nav>
