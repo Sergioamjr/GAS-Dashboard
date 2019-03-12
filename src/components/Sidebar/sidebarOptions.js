@@ -1,5 +1,3 @@
-// confirmed_shipping;
-
 const SidebarOptions = [
   {
     name: 'Início',
@@ -14,17 +12,20 @@ const SidebarOptions = [
   {
     name: 'Cadastrar Entrega',
     to: '/lista-de-entregas',
-    icon: 'fas fa-file-alt'
+    icon: 'fas fa-file-alt',
+    roles: ['ADMIN', 'SUPPORT', 'RH']
   },
   {
     name: 'Cadastrar Rota',
     to: '/lista-de-rotas',
-    icon: 'fas fa-road'
+    icon: 'fas fa-road',
+    roles: ['ADMIN']
   },
   {
     name: 'Consultar Usuários',
     to: '/usuarios',
-    icon: 'fas fa-users'
+    icon: 'fas fa-users',
+    roles: ['ADMIN']
   }
 ];
 

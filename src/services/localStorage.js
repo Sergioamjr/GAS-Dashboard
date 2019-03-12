@@ -1,4 +1,9 @@
-const KEY = "gas-auth";
+const KEY = 'gas-auth';
+
+export const getAuthDirectly = (item = KEY) => {
+  const credentials = localStorage.getItem(item);
+  return JSON.parse(credentials);
+};
 
 export const getAuth = (item = KEY) => {
   return new Promise((resolve, reject) => {
