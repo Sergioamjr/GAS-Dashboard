@@ -1,5 +1,6 @@
 //@flow
 import React from 'react';
+import InputWithMask from '../InputMask/InputMask';
 
 type Props = {
   label?: string,
@@ -8,7 +9,10 @@ type Props = {
   errorMessage?: string,
   hasError?: boolean,
   prefix?: string,
-  placeholder?: string
+  placeholder?: string,
+  mask?: string,
+  formatChars?: string,
+  disabled: boolean
 };
 
 const Input = (props: Props) => {
@@ -19,9 +23,11 @@ const Input = (props: Props) => {
     errorMessage,
     hasError,
     prefix,
+    mask,
+    formatChars,
     ...otherProps
   } = props;
-  const { placeholder } = props;
+  const { placeholder, disabled } = props;
   return (
     <div className='m-bottom-30 input-wrapper'>
       {label && (
@@ -29,12 +35,22 @@ const Input = (props: Props) => {
           {label}
         </label>
       )}
-      {textarea ? (
-        <textarea {...otherProps} name={name} id={name} />
-      ) : (
-        <input {...otherProps} name={name} id={name} />
+
+      {mask && (
+        <InputWithMask
+          {...otherProps}
+          name={name}
+          id={name}
+          mask={mask}
+          formatChars={formatChars}
+        />
       )}
-      {hasError && (
+
+      {textarea && <textarea {...otherProps} name={name} id={name} />}
+
+      {!mask && !textarea && <input {...otherProps} name={name} id={name} />}
+
+      {hasError && !disabled && (
         <p className='color-danger fs-7 m-top-5 input-wrapper-error'>
           {errorMessage || placeholder}
         </p>

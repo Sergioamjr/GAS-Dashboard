@@ -45,6 +45,13 @@ class ProfileForm extends React.Component {
               disabled={this.props.disabledAll || !this.props.isDisabled}
               label='Telefone:'
               name='telefone'
+              mask={
+                this.props.telefone &&
+                this.props.telefone.replace(/\D/g, '').length <= 10
+                  ? '(99) 9999-9999?'
+                  : '(99) 99999-9999'
+              }
+              formatChars={{ 9: '[0-9]', '?': '[0-9]' }}
               onChange={this.props.onChangeHandler}
               value={this.props.telefone}
               placeholder='Digite seu telefone'
@@ -53,7 +60,8 @@ class ProfileForm extends React.Component {
           <div className='sm-3-12'>
             <Input
               disabled={this.props.disabledAll || !this.props.isDisabled}
-              label='Nascimento:'
+              label='Nascimentos:'
+              mask='99/99/9999'
               name='nascimento'
               errorMessage='Digite uma data válida. (ex. 10/01/1980)'
               hasError={this.props.nascimento.replace(/\D/g, '').length !== 8}
@@ -66,6 +74,13 @@ class ProfileForm extends React.Component {
             <Input
               disabled={this.props.disabledAll || !this.props.isDisabled}
               label='Telefone de Emergência:'
+              mask={
+                this.props.numeroDeEmergencia &&
+                this.props.numeroDeEmergencia.replace(/\D/g, '').length <= 10
+                  ? '(99) 9999-9999?'
+                  : '(99) 99999-9999'
+              }
+              formatChars={{ 9: '[0-9]', '?': '[0-9]' }}
               name='numeroDeEmergencia'
               onChange={this.props.onChangeHandler}
               hasError={!this.props.numeroDeEmergencia}
