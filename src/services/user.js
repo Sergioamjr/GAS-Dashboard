@@ -116,7 +116,7 @@ export const CreateUser = ({
   sobrenome
 }) => {
   return new Promise((resolve, reject) => {
-    if (!nome || !email || !password || !repassword || !sobrenome) {
+    if (!nome || !email || !password || !repassword) {
       return reject('Preencha todos os campos.');
     }
 

@@ -130,12 +130,13 @@ class Login extends React.Component<Props, State> {
             email,
             password: userID,
             repassword: userID,
-            sobrenome: ''
+            sobrenome: '.'
           });
           this.props.dispatch(UpdateUser(user));
           await setAuth(user);
           this.redirectToHome();
         } catch (error) {
+          console.log('error', error);
           this.props.dispatch(
             updateErrorMessage('Usuário ou senha inválidos.')
           );
