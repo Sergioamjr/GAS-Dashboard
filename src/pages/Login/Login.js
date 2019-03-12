@@ -12,6 +12,8 @@ import { UpdateUser } from '../../redux/store/User/User';
 import Loading from '../../components/Loading/Loading';
 import { hasValidToken, CreateLoginWithFacebook } from '../../services/user';
 import FacebookLogin from 'react-facebook-login';
+import { connect } from 'react-redux';
+import { updateErrorMessage } from '../../redux/store/Feedback/feedback';
 
 type State = {
   data: {
@@ -94,6 +96,9 @@ class Login extends React.Component<Props, State> {
           await setAuth(user);
           this.redirectToHome();
         } catch (error) {
+          this.props.dispatch(
+            updateErrorMessage('Usuário ou senha inválidos.')
+          );
           this.setState({
             isSubmiting: false,
             hasError: true
@@ -131,6 +136,9 @@ class Login extends React.Component<Props, State> {
           await setAuth(user);
           this.redirectToHome();
         } catch (error) {
+          this.props.dispatch(
+            updateErrorMessage('Usuário ou senha inválidos.')
+          );
           this.setState({
             isSubmiting: false,
             hasError: true
@@ -172,11 +180,11 @@ class Login extends React.Component<Props, State> {
                       onChange={this.onChangeHandler}
                       placeholder='Digite sua senha'
                     />
-                    {this.state.hasError && (
+                    {/* {this.state.hasError && (
                       <p className='color-danger m-bottom-20 p-center'>
                         Usuário ou senha incorretas.
                       </p>
-                    )}
+                    )} */}
 
                     <Button
                       loading={this.state.isSubmiting ? 1 : 0}
@@ -206,4 +214,4 @@ class Login extends React.Component<Props, State> {
   }
 }
 
-export default Login;
+export default connect()(Login);
