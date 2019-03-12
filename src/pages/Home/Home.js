@@ -292,7 +292,7 @@ class Home extends React.Component {
 
         {this.state.action._id && this.state.details.isOpen && (
           <div className='m-bottom-20 background-success color-white p-center p-10'>
-            <marquee>Você já está cadastrado na próxima entrega.</marquee>
+            Você já está cadastrado na próxima entrega.
           </div>
         )}
 
