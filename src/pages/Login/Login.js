@@ -117,7 +117,8 @@ class Login extends React.Component<Props, State> {
       },
       async () => {
         try {
-          const { name, email, userID } = response;
+          console.log('rs', response);
+          const { name, email, id: userID } = response;
 
           const user = await CreateLoginWithFacebook({
             nome: name,
