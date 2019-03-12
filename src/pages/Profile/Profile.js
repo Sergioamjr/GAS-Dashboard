@@ -15,13 +15,14 @@ import {
   getProfileImage
 } from '../../services/user';
 import _get from 'lodash/get';
-import { getAuth } from '../../services/localStorage';
+import { getAuth, getAuthDirectly } from '../../services/localStorage';
 import {
   updateMessage,
   updateErrorMessage
 } from '../../redux/store/Feedback/feedback';
 import { getRotas } from '../../services/data-de-entrega';
 import { connect } from 'react-redux';
+import { ADMIN } from '../../APP-CONFIG';
 
 const partnersDefault = {
   isQuerying: false,
@@ -314,6 +315,7 @@ class Profile extends React.Component {
     const partnersToShow = this.filterResultsToAdd();
     const { url } = this.state;
     const urlID = _get(this.props, 'match.params.id');
+    const { email } = getAuthDirectly();
     return (
       <PageWrapper title='Dados Pessoais'>
         <div className='m-bottom-40'>
@@ -363,6 +365,7 @@ class Profile extends React.Component {
               rotas={this.state.rotas}
               isDisabled={this.state.isEditing}
               onChangeHandler={this.onChangeHandler}
+              hideDetails={!ADMIN.includes(email)}
             />
           </FromGroup>
           <FromGroup title='Conjugue e familiares no GAS'>

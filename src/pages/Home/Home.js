@@ -5,7 +5,7 @@ import Button from '../../components/Button/Button';
 import { NavLink } from 'react-router-dom';
 import ProfileForm from '../../components/ProfileForm';
 import ActionInfo from '../../components/ActionInfo/ActionInfo';
-import { getAuth } from '../../services/localStorage';
+import { getAuth, getAuthDirectly } from '../../services/localStorage';
 import { getUserInfo } from '../../services/user';
 import { getNextActionDate } from '../../services/data-de-entrega';
 import _get from 'lodash/get';
@@ -19,6 +19,7 @@ import {
   voluntaryHistory
 } from '../../services/voluntary';
 import { updateMessage } from '../../redux/store/Feedback/feedback';
+import { ADMIN } from '../../APP-CONFIG';
 
 const stateDefault = {
   data: {
@@ -266,6 +267,7 @@ class Home extends React.Component {
   };
 
   render() {
+    const { email } = getAuthDirectly();
     const dataProxima = _get(this.state, 'details.dataProxima');
     const parceiro_1 = _get(this.state, 'data.parceiro_1');
     const parceiro_2 = _get(this.state, 'data.parceiro_2');
@@ -332,6 +334,7 @@ class Home extends React.Component {
                 {...this.state.data}
                 disabledAll
                 hideDetails
+                isAdmin={ADMIN.includes(email)}
                 onChangeHandler={this.onChangeHandler}
               />
             </FromGroup>
