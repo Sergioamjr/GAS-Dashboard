@@ -14,6 +14,7 @@ import { hasValidToken, CreateLoginWithFacebook } from '../../services/user';
 import FacebookLogin from 'react-facebook-login';
 import { connect } from 'react-redux';
 import { updateErrorMessage } from '../../redux/store/Feedback/feedback';
+import Toaster from '../../components/Toaster';
 
 type State = {
   data: {
@@ -122,8 +123,7 @@ class Login extends React.Component<Props, State> {
       },
       async () => {
         try {
-          console.log('rs', response);
-          const { name, email, id: userID } = response;
+          const { name, email, userID } = response;
 
           const user = await CreateLoginWithFacebook({
             nome: name,
@@ -209,6 +209,7 @@ class Login extends React.Component<Props, State> {
             )}
           </div>
         </div>
+        <Toaster />
       </div>
     );
   }
