@@ -108,24 +108,10 @@ export const updateUser = async params => {
   return await promiseFactoryPost('atualizar-usuario', params, 'put');
 };
 
-export const CreateUser = ({
-  nome,
-  email,
-  password,
-  repassword,
-  sobrenome
-}) => {
+export const CreateUser = params => {
   return new Promise((resolve, reject) => {
-    if (!nome || !email || !password || !repassword) {
-      return reject('Preencha todos os campos.');
-    }
-
-    if (password !== repassword) {
-      return reject('Senhas não conferem.');
-    }
-
     return axios
-      .post(`${BACKEND}/create-user`, { nome, email, password, sobrenome })
+      .post(`${BACKEND}/create-user`, params)
       .then(({ data }) => {
         return resolve(data);
       })
@@ -138,10 +124,6 @@ export const CreateUser = ({
 
 export const RequestResetPassword = ({ email }) => {
   return new Promise((resolve, reject) => {
-    if (!email) {
-      return reject('Preencha seu e-email.');
-    }
-
     return axios
       .post(`${BACKEND}/send-email-to-reset-password`, { email })
       .then(({ data }) => resolve(data))

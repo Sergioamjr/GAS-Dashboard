@@ -12,7 +12,7 @@ type Props = {
   placeholder?: string,
   mask?: string,
   formatChars?: string,
-  disabled: boolean
+  disabled?: boolean
 };
 
 const Input = (props: Props) => {
