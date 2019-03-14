@@ -37,6 +37,7 @@ type State = {
     email: string,
     auth: boolean
   },
+  view: string,
   recovery: {
     email: string
   },
@@ -61,6 +62,7 @@ const stateDefault = {
     email: '',
     auth: false
   },
+  view: 'login',
   recovery: {
     email: ''
   },
@@ -261,6 +263,11 @@ class Login extends React.Component<Props, State> {
     );
   };
 
+  onUpdateViewHandler = view => {
+    this.setState({
+      view
+    });
+  };
   render() {
     const hasValidForm = this.validateLoginForm();
     const hasValidCreateAccount = this.validateCreateAccount();
@@ -277,7 +284,7 @@ class Login extends React.Component<Props, State> {
               <Loading />
             ) : (
               <div className='w-100'>
-                {true && (
+                {this.state.view === 'login' && (
                   <FromGroup title='Faça login' hideIcon>
                     <div className='p-15 background-white'>
                       <Input
@@ -306,13 +313,16 @@ class Login extends React.Component<Props, State> {
                           Entrar
                         </Button>
                         <div>
-                          <Button small onClick={this.onSubmitHandler}>
+                          <Button
+                            small
+                            onClick={() => this.onUpdateViewHandler('recovery')}
+                          >
                             Recuperar Senha
                           </Button>
                           <Button
                             className='m-left-10'
                             small
-                            onClick={this.onSubmitHandler}
+                            onClick={() => this.onUpdateViewHandler('register')}
                           >
                             Criar Conta
                           </Button>
@@ -322,7 +332,7 @@ class Login extends React.Component<Props, State> {
                   </FromGroup>
                 )}
 
-                {false && (
+                {this.state.view === 'register' && (
                   <FromGroup title='Crie sua conta' hideIcon>
                     <div className='p-15 background-white'>
                       <div className='grid'>
@@ -386,13 +396,16 @@ class Login extends React.Component<Props, State> {
                           Criar Conta
                         </Button>
                         <div>
-                          <Button small onClick={this.onSubmitHandler}>
+                          <Button
+                            small
+                            onClick={() => this.onUpdateViewHandler('recovery')}
+                          >
                             Recuperar Senha
                           </Button>
                           <Button
                             className='m-left-10'
                             small
-                            onClick={this.onSubmitHandler}
+                            onClick={() => this.onUpdateViewHandler('login')}
                           >
                             Fazer Login
                           </Button>
@@ -401,7 +414,7 @@ class Login extends React.Component<Props, State> {
                     </div>
                   </FromGroup>
                 )}
-                {false && (
+                {this.state.view === 'recovery' && (
                   <FromGroup title='Recuperar Senha' hideIcon>
                     <div className='p-15 background-white'>
                       <Input
@@ -421,13 +434,16 @@ class Login extends React.Component<Props, State> {
                           Recuperar Senha
                         </Button>
                         <div>
-                          <Button small onClick={this.onSubmitHandler}>
+                          <Button
+                            small
+                            onClick={() => this.onUpdateViewHandler('login')}
+                          >
                             Fazer Login
                           </Button>
                           <Button
                             className='m-left-10'
                             small
-                            onClick={this.onSubmitHandler}
+                            onClick={() => this.onUpdateViewHandler('register')}
                           >
                             Criar Conta
                           </Button>
