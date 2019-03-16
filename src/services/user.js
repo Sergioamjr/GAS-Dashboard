@@ -122,10 +122,10 @@ export const CreateUser = params => {
   });
 };
 
-export const RequestResetPassword = ({ email }) => {
+export const RequestResetPassword = ({ email, origin }) => {
   return new Promise((resolve, reject) => {
     return axios
-      .post(`${BACKEND}/send-email-to-reset-password`, { email })
+      .post(`${BACKEND}/send-email-to-reset-password`, { email, origin })
       .then(({ data }) => resolve(data))
       .catch(({ response }) => {
         const { data } = response;

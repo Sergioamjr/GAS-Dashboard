@@ -198,7 +198,11 @@ class Login extends React.Component<Props, State> {
       },
       async () => {
         try {
-          const { message } = await RequestResetPassword(this.state.recovery);
+          const origin = _get(window, 'location.origin');
+          const { message } = await RequestResetPassword({
+            ...this.state.recovery,
+            origin
+          });
 
           this.props.dispatch(
             updateMessage(
