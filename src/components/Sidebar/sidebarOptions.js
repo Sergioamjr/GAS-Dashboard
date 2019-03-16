@@ -16,6 +16,12 @@ const SidebarOptions = [
     roles: ['ADMIN', 'SUPPORT', 'RH']
   },
   {
+    name: 'Consultar Entregas',
+    to: '/consultar-entregas',
+    icon: 'fas fa-file-alt',
+    roles: ['ADMIN', 'SUPPORT', 'RH']
+  },
+  {
     name: 'Cadastrar Rota',
     to: '/lista-de-rotas',
     icon: 'fas fa-road',

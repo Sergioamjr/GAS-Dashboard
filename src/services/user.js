@@ -190,3 +190,11 @@ export const uploadProfileImage = (image, user_id) => {
 export const getProfileImage = async user_id => {
   return await promiseFactory('profile-image-by-id', { user_id });
 };
+
+export const getActions = async () => {
+  return await promiseFactory('query-actions');
+};
+
+export const getVoluntariesByActions = async action_date => {
+  return await promiseFactory('query-voluntary-by-action', { action_date });
+};

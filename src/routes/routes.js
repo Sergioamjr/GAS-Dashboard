@@ -8,6 +8,7 @@ import ListUses from '../pages/ListUsers/ListUsers';
 import ListActions from '../pages/ListActions/ListActions';
 import ListRotas from '../pages/ListRotas/ListRotas';
 import ResetPassword from '../pages/ResetPassword';
+import QueryAction from '../pages/QueryAction';
 
 class AppRouter extends React.Component {
   render() {
@@ -54,6 +55,14 @@ class AppRouter extends React.Component {
             path='/lista-de-rotas'
             component={props => (
               <RestrictPage component={ListRotas} {...props} />
+            )}
+          />
+
+          <Route
+            exact
+            path='/consultar-entregas'
+            component={props => (
+              <RestrictPage component={QueryAction} {...props} />
             )}
           />
 
