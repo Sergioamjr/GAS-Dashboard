@@ -7,6 +7,7 @@ import Profile from '../pages/Profile/Profile';
 import ListUses from '../pages/ListUsers/ListUsers';
 import ListActions from '../pages/ListActions/ListActions';
 import ListRotas from '../pages/ListRotas/ListRotas';
+import ResetPassword from '../pages/ResetPassword';
 
 class AppRouter extends React.Component {
   render() {
@@ -54,6 +55,12 @@ class AppRouter extends React.Component {
             component={props => (
               <RestrictPage component={ListRotas} {...props} />
             )}
+          />
+
+          <Route
+            exact
+            path='/recuperar-senha/:token'
+            component={ResetPassword}
           />
 
           <Redirect to='/inicio' />

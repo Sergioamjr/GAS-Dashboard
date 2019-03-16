@@ -199,14 +199,14 @@ class Login extends React.Component<Props, State> {
       async () => {
         try {
           const origin = _get(window, 'location.origin');
-          const { message } = await RequestResetPassword({
+          await RequestResetPassword({
             ...this.state.recovery,
             origin
           });
 
           this.props.dispatch(
             updateMessage(
-              message || 'Foi enviado um email para recuperar sua senha.'
+              'Foi enviado um link para seu e-mail para recuper sua senha.'
             )
           );
           this.setState({
