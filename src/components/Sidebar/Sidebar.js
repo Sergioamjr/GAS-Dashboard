@@ -11,13 +11,7 @@ const rolesControll = roles => {
   if (!roles) {
     return true;
   }
-  if (roles.includes('ADMIN')) {
-    return ADMIN.filter(role => role === email).length > 0;
-  }
-
-  if (roles.includes('SUPPORT')) {
-    return SUPPORT.filter(role => role === email).length > 0;
-  }
+  return roles.includes(email);
 };
 
 class Sidebar extends React.Component {

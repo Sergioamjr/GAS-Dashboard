@@ -1,3 +1,5 @@
+import { ADMIN, SUPPORT } from '../../APP-CONFIG';
+
 const SidebarOptions = [
   {
     name: 'Próxima Entrega',
@@ -13,25 +15,25 @@ const SidebarOptions = [
     name: 'Cadastrar Entrega',
     to: '/lista-de-entregas',
     icon: 'fas fa-file-alt',
-    roles: ['ADMIN', 'SUPPORT', 'RH']
+    roles: [].concat(ADMIN)
   },
   {
     name: 'Consultar Entregas',
     to: '/consultar-entregas',
     icon: 'fas fa-file-alt',
-    roles: ['ADMIN', 'SUPPORT', 'RH']
+    roles: [].concat(ADMIN).concat(SUPPORT)
   },
   {
     name: 'Cadastrar Rota',
     to: '/lista-de-rotas',
     icon: 'fas fa-road',
-    roles: ['ADMIN']
+    roles: [].concat(ADMIN)
   },
   {
     name: 'Consultar Usuários',
     to: '/usuarios',
     icon: 'fas fa-users',
-    roles: ['ADMIN']
+    roles: [].concat(ADMIN).concat(SUPPORT)
   }
 ];
 

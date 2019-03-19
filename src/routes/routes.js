@@ -33,7 +33,11 @@ class AppRouter extends React.Component {
             exact
             path='/usuarios'
             component={props => (
-              <RestrictPage roles={ADMIN} component={ListUses} {...props} />
+              <RestrictPage
+                roles={[].concat(ADMIN).concat(SUPPORT)}
+                component={ListUses}
+                {...props}
+              />
             )}
           />
 
