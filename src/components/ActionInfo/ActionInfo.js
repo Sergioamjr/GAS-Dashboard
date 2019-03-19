@@ -27,7 +27,7 @@ class ActionInfo extends React.Component {
             className={` ${!this.props.hideFirstTime ? 'sm-3-12' : 'sm-6-12'} `}
           >
             <label htmlFor='withCar' className='label d-block m-bottom-60'>
-              Você irá de carro?
+              Você participará da entrega com seu carro?
             </label>
             <div className='m-top-10 m-bottom-10'>
               <Checkbox
@@ -43,7 +43,7 @@ class ActionInfo extends React.Component {
           <div className='sm-6-12'>
             <Input
               disabled={!this.props.withCar || this.props.disabled}
-              label='Modelo do carro:'
+              label='Modelo do seu carro:'
               name='carModel'
               onChange={this.props.onChangeHandler}
               value={this.props.carModel}
