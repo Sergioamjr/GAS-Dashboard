@@ -131,7 +131,7 @@ class Login extends React.Component<Props, State> {
   };
 
   redirectToHome = () => {
-    this.props.history.push('/inicio');
+    this.props.history.push('/meu-perfil');
   };
 
   onSubmitHandler = () => {

@@ -1,6 +1,6 @@
 const SidebarOptions = [
   {
-    name: 'Início',
+    name: 'Próxima Entrega',
     to: '/inicio',
     icon: 'fas fa-home'
   },
