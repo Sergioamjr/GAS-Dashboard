@@ -9,6 +9,7 @@ import ListActions from '../pages/ListActions/ListActions';
 import ListRotas from '../pages/ListRotas/ListRotas';
 import ResetPassword from '../pages/ResetPassword';
 import QueryAction from '../pages/QueryAction';
+import { ADMIN, SUPPORT } from '../APP-CONFIG';
 
 class AppRouter extends React.Component {
   render() {
@@ -32,21 +33,27 @@ class AppRouter extends React.Component {
             exact
             path='/usuarios'
             component={props => (
-              <RestrictPage component={ListUses} {...props} />
+              <RestrictPage roles={ADMIN} component={ListUses} {...props} />
             )}
           />
 
           <Route
             exact
             path='/usuario/:id'
-            component={props => <RestrictPage component={Profile} {...props} />}
+            component={props => (
+              <RestrictPage
+                roles={[].concat(ADMIN).concat(SUPPORT)}
+                component={Profile}
+                {...props}
+              />
+            )}
           />
 
           <Route
             exact
             path='/lista-de-entregas'
             component={props => (
-              <RestrictPage component={ListActions} {...props} />
+              <RestrictPage roles={ADMIN} component={ListActions} {...props} />
             )}
           />
 
@@ -54,7 +61,7 @@ class AppRouter extends React.Component {
             exact
             path='/lista-de-rotas'
             component={props => (
-              <RestrictPage component={ListRotas} {...props} />
+              <RestrictPage roles={ADMIN} component={ListRotas} {...props} />
             )}
           />
 
@@ -62,7 +69,11 @@ class AppRouter extends React.Component {
             exact
             path='/consultar-entregas'
             component={props => (
-              <RestrictPage component={QueryAction} {...props} />
+              <RestrictPage
+                roles={[].concat(ADMIN).concat(SUPPORT)}
+                component={QueryAction}
+                {...props}
+              />
             )}
           />
 

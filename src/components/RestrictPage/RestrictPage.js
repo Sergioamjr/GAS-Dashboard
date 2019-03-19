@@ -1,8 +1,8 @@
 //@flow
-import * as React from "react";
-import { getAuth } from "../../services/localStorage";
-import type { BrowserHistory } from "history";
-import { hasValidToken } from "../../services/user";
+import * as React from 'react';
+import { getAuth } from '../../services/localStorage';
+import type { BrowserHistory } from 'history';
+import { hasValidToken } from '../../services/user';
 
 /*
 Improvement:
@@ -11,7 +11,8 @@ Only render the child component if has permission
 
 type Props = {
   component: React.ElementType,
-  history: BrowserHistory
+  history: BrowserHistory,
+  roles?: any
 };
 
 type State = {
@@ -36,9 +37,12 @@ class RestrictPage extends React.Component<Props, State> {
       },
       async () => {
         try {
-          const { token } = await getAuth();
+          const { token, email } = await getAuth();
           const { isValid } = await hasValidToken({ token });
-          if (!isValid) {
+          const { roles } = this.props;
+          const hasRoles =
+            roles && roles.filter(role => role === email).length > 0;
+          if (!isValid || (roles && !hasRoles)) {
             this.redirectToLogin();
             return false;
           }
@@ -51,7 +55,7 @@ class RestrictPage extends React.Component<Props, State> {
   };
 
   redirectToLogin = () => {
-    this.props.history.push("/");
+    this.props.history.push('/');
   };
 
   render() {
