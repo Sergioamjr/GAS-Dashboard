@@ -10,4 +10,10 @@ export const ADMIN = [
   'admin@gas.com'
 ];
 
-export const SUPPORT = ['suporte@gas.com'];
+export const SUPPORT = [
+  'suporte@gas.com',
+  'renatabosf@hotmail.com',
+  'tati.viana18@gmail.com',
+  'shymenni@outlook.com',
+  'pri_souza6@hotmail.com'
+];
