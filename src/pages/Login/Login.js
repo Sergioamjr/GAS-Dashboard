@@ -293,10 +293,10 @@ class Login extends React.Component<Props, State> {
                     <div className='p-15 background-white'>
                       <Input
                         value={this.state.data.email}
-                        label='Usuário'
+                        label='E-mail'
                         name='email'
                         onChange={this.onChangeHandler}
-                        placeholder='Digite seu usuário'
+                        placeholder='Digite seu e-mail'
                       />
                       <Input
                         value={this.state.data.password}
