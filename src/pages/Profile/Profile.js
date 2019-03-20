@@ -18,9 +18,10 @@ import _get from 'lodash/get';
 import { getAuth, getAuthDirectly } from '../../services/localStorage';
 import {
   updateMessage,
-  updateErrorMessage
+  updateErrorMessage,
+  updateMessageWithDelay
 } from '../../redux/store/Feedback/feedback';
-import { getRotas } from '../../services/data-de-entrega';
+import { getRotas, deleteUser } from '../../services/data-de-entrega';
 import { connect } from 'react-redux';
 import { ADMIN } from '../../APP-CONFIG';
 
@@ -311,6 +312,17 @@ class Profile extends React.Component {
     } catch (error) {}
   };
 
+  onDeleteUserHandler = async () => {
+    try {
+      const _id = _get(this.props, 'match.params.id');
+      await deleteUser({ _id });
+      this.props.dispatch(
+        updateMessageWithDelay('Usuário excluído com sucesso.')
+      );
+      this.props.history.goBack();
+    } catch (error) {}
+  };
+
   render() {
     const partnersToShow = this.filterResultsToAdd();
     const { url } = this.state;
@@ -385,9 +397,11 @@ class Profile extends React.Component {
                   {urlID && (
                     <Button onClick={this.onBackHandler}>Voltar</Button>
                   )}
-                  <Button onClick={this.onEditHandler} className='m-left-10'>
-                    Editar
-                  </Button>
+                  {(ADMIN.includes(email) || !urlID) && (
+                    <Button onClick={this.onEditHandler} className='m-left-10'>
+                      Editar
+                    </Button>
+                  )}
                 </div>
               ) : (
                 <div>
@@ -400,7 +414,11 @@ class Profile extends React.Component {
                 </div>
               )}
             </div>
-            {/* <Button type='danger'>Alterar minha senha</Button> */}
+            {ADMIN.includes(email) && urlID && (
+              <Button onClick={this.onDeleteUserHandler} type='danger'>
+                Excluir usuário
+              </Button>
+            )}
           </div>
         </div>
       </PageWrapper>

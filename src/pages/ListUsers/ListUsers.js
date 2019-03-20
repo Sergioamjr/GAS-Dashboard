@@ -79,13 +79,13 @@ class ListUses extends React.Component {
                             </Button>
                           </NavLink>
 
-                          <Button
+                          {/* <Button
                             onClick={() => this.onDeleteHandler(_id)}
                             icon
                             type='danger'
                           >
                             <i className='fas fa-trash' />
-                          </Button>
+                          </Button> */}
                         </td>
                         <td className='fs-7'>{nome}</td>
                         <td className='fs-7'>{email}</td>
