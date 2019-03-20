@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import SidebarOptions from './sidebarOptions';
 import { closeMenu, openMenu } from '../../redux/store/UI/UI';
-import { ADMIN, SUPPORT } from '../../APP-CONFIG';
 import { getAuthDirectly } from '../../services/localStorage';
 
 const rolesControll = roles => {
